@@ -1,4 +1,4 @@
-package com.androiddevs.mvvmnewsapp.repository
+package com.example.flightsearch.repository
 
 import androidx.lifecycle.ViewModel
 import com.example.flightsearch.db.AppDatabase

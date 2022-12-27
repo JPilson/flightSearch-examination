@@ -2,7 +2,6 @@ package com.example.flightsearch.repository
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.androiddevs.mvvmnewsapp.repository.AppViewModel
 import com.example.flightsearch.db.AppDatabase
 
 class AppViewModelFactory(private val db:AppDatabase):ViewModelProvider.Factory {
