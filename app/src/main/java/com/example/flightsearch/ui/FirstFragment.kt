@@ -14,7 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.flightsearch.adapters.ListAdapter
+import com.example.flightsearch.adapters.AirportListAdapter
 import com.example.flightsearch.databinding.FragmentFirstBinding
 import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.AirportModel
@@ -35,7 +35,7 @@ class FirstFragment : Fragment() {
     lateinit var contentResolver: ContentResolver
     lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
-    private lateinit var adapter: ListAdapter
+    private lateinit var adapter: AirportListAdapter
     private lateinit var recyclerView: RecyclerView
 
     //    lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
@@ -62,7 +62,7 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = ListAdapter()
+        adapter = AirportListAdapter()
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
