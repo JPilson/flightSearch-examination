@@ -1,8 +1,6 @@
 package com.example.flightsearch.ui
 
-import android.app.Activity
 import android.content.ContentResolver
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +11,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.flightsearch.adapters.ListAdapter
 import com.example.flightsearch.databinding.FragmentFirstBinding
+import com.example.flightsearch.db.AppDatabase
+import com.example.flightsearch.models.AirportModel
+import com.example.flightsearch.repository.AirportRepository
+import com.example.flightsearch.repository.AppViewModel
+import com.example.flightsearch.repository.AppViewModelFactory
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -27,6 +34,9 @@ class FirstFragment : Fragment() {
     private var _binding: FragmentFirstBinding? = null
     lateinit var contentResolver: ContentResolver
     lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
+    private lateinit var viewModel: AppViewModel
+    private lateinit var adapter: ListAdapter
+    private lateinit var recyclerView: RecyclerView
 
     //    lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     companion object {
@@ -52,17 +62,39 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        adapter = ListAdapter()
+        recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val appViewModelFactory =
+            AppViewModelFactory(AirportRepository(AppDatabase.getDatabase(requireContext())))
+        viewModel = ViewModelProvider(this, appViewModelFactory)[AppViewModel::class.java]
+//        adapter.setData(viewModel.airports.se)
+        viewModel.airports.observe(viewLifecycleOwner) {
+            Log.d(TAG, "onViewCreated: Dataaa ${it.size}")
+            adapter.setData(it)
+        }
+        recyclerView.adapter = adapter
+
         contentResolver = context?.contentResolver!!
 
         filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             openDocument(it)
         }
-
         binding.buttonFirst.setOnClickListener {
-            openDocumentPicker()
+//            openDocumentPicker()
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
         }
+    }
 
+    private fun insertToDB(airport: AirportModel) {
+        try {
+            viewModel.registerAirport(airport)
+            Toast.makeText(context, "Added New one", Toast.LENGTH_SHORT).show()
+        } catch (e: java.lang.Exception) {
+            Toast.makeText(context, "Something went Wrong", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {
@@ -77,7 +109,7 @@ class FirstFragment : Fragment() {
 
     @Throws(IOException::class)
     fun openDocument(uri: Uri?) {
-        if(uri == null){
+        if (uri == null) {
             Toast.makeText(context, "Failed to open File", Toast.LENGTH_SHORT).show()
             return
         }

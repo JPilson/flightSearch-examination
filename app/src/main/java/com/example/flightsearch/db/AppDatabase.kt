@@ -3,10 +3,12 @@ package com.example.flightsearch.db
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.models.UserModel
 
-@androidx.room.Database(entities = [UserModel::class], version = 1)
+@androidx.room.Database(entities = [UserModel::class,AirportModel::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun airportDao():AirportDao
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
