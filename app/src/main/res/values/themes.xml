@@ -9,9 +9,15 @@
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="backgroundColor">@color/white</item>
+        <item name="outlinedColor">@color/f_gray</item>
+        <item name="textColor">@color/black</item>
+
+
     </style>
 
     <style name="Theme.FlightSearch.NoActionBar">

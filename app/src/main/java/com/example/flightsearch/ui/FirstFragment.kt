@@ -21,6 +21,7 @@ import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.repository.AirportRepository
 import com.example.flightsearch.repository.AppViewModel
 import com.example.flightsearch.repository.AppViewModelFactory
+import com.example.flightsearch.ui.fragments.SearchFragment
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -32,8 +33,9 @@ class FirstFragment : Fragment() {
 
 
     private var _binding: FragmentFirstBinding? = null
-    lateinit var contentResolver: ContentResolver
-    lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
+    private lateinit var searchFragment: SearchFragment
+    private lateinit var contentResolver: ContentResolver
+    private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
     private lateinit var adapter: AirportListAdapter
     private lateinit var recyclerView: RecyclerView
@@ -71,7 +73,6 @@ class FirstFragment : Fragment() {
         viewModel = ViewModelProvider(this, appViewModelFactory)[AppViewModel::class.java]
 //        adapter.setData(viewModel.airports.se)
         viewModel.airports.observe(viewLifecycleOwner) {
-            Log.d(TAG, "onViewCreated: Dataaa ${it.size}")
             adapter.setData(it)
         }
         recyclerView.adapter = adapter
@@ -81,10 +82,16 @@ class FirstFragment : Fragment() {
         filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             openDocument(it)
         }
+        searchFragment = SearchFragment()
+
+
         binding.buttonFirst.setOnClickListener {
+           activity?.let {
+               searchFragment.show(it.supportFragmentManager,"Search Dialog")
+           }
 //            openDocumentPicker()
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
+//            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
         }
     }
 
