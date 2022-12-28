@@ -13,11 +13,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.flightsearch.adapters.AirportListAdapter
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.flightsearch.R
 import com.example.flightsearch.databinding.AirportPickerBinding
-import com.example.flightsearch.databinding.FragmentFirstBinding
+import com.example.flightsearch.databinding.FragmentHomeBinding
 import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.repository.AirportRepository
@@ -31,10 +31,10 @@ import java.io.InputStreamReader
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class HomeFragment : Fragment() {
 
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     private lateinit var searchFragment: SearchFragment
     private lateinit var contentResolver: ContentResolver
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
@@ -53,7 +53,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -92,11 +92,8 @@ class FirstFragment : Fragment() {
                 SearchFragment.Companion.Tag.DESTINATION_SEARCH
             )
         }
-
         binding.buttonFirst.setOnClickListener {
-
-//            openDocumentPicker()
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 //            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
         }
 
