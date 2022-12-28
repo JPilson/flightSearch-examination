@@ -8,7 +8,6 @@ plugins {
 android {
     namespace 'com.example.flightsearch'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.example.flightsearch"
         minSdk 31

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:aapt="http://schemas.android.com/aapt"
+        android:width="400dp"
+        android:height="150dp"
+        android:viewportWidth="400"
+        android:viewportHeight="150"
+        >
+    <group>
+        <clip-path
+                android:pathData="M16 0H384C392.837 0 400 7.16344 400 16V134C400 142.837 392.837 150 384 150H16C7.16344 150 0 142.837 0 134V16C0 7.16344 7.16344 0 16 0Z"
+                />
+        <group
+                android:translateX="0.358"
+                android:translateY="-1.713"
+                android:pivotX="200"
+                android:pivotY="75"
+                android:scaleX="1.355"
+                android:scaleY="7.568"
+                android:rotation="38.682"
+                >
+            <path
+                    android:pathData="M0 0V150H400V0"
+                    >
+                <aapt:attr name="android:fillColor">
+                    <gradient
+                            android:type="linear"
+                            android:startX="100"
+                            android:startY="75"
+                            android:endX="300"
+                            android:endY="75"
+                            >
+                        <item
+                                android:color="#FFFFFF"
+                                android:offset="0"
+                                />
+                        <item
+                                android:color="#30FFD75F"
+                                android:offset="1"
+                                />
+                    </gradient>
+                </aapt:attr>
+            </path>
+        </group>
+        <path
+                android:pathData="M16 0H384C392.837 0 400 7.16344 400 16V134C400 142.837 392.837 150 384 150H16C7.16344 150 0 142.837 0 134V16C0 7.16344 7.16344 0 16 0Z"
+                android:strokeWidth="2"
+                android:strokeColor="#C4C4C4"
+                />
+    </group>
+</vector>

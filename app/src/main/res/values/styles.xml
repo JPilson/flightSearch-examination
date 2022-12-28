@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="where_to_">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.77</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="hello">
+        <item name="android:textSize">48sp</item>
+        <item name="android:letterSpacing">0.25</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+</resources>
