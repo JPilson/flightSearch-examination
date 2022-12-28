@@ -10,7 +10,7 @@
         >
 
     <TextView
-            android:id="@+id/from"
+            android:id="@+id/label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
@@ -27,8 +27,8 @@
             android:id="@+id/airport_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/from"
-            app:layout_constraintTop_toBottomOf="@+id/from"
+            app:layout_constraintStart_toStartOf="@+id/label"
+            app:layout_constraintTop_toBottomOf="@+id/label"
             android:text="@string/airport_name_placeholder"
             app:layout_constraintEnd_toStartOf="@+id/icon"
             android:layout_marginEnd="16dp"
@@ -54,7 +54,7 @@
             android:layout_height="28dp"
             android:src="@drawable/ic_plane_take_off"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/from"
+            app:layout_constraintTop_toTopOf="@+id/label"
             app:layout_constraintBottom_toBottomOf="@+id/country_name"
             android:layout_marginEnd="8dp"/>
 

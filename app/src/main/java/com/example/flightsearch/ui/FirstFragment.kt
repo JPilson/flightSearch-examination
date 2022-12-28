@@ -46,7 +46,6 @@ class FirstFragment : Fragment() {
         private const val FILE_PICKER = 2
     }
 
-
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -82,13 +81,13 @@ class FirstFragment : Fragment() {
         filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             openDocument(it)
         }
-        searchFragment = SearchFragment()
+        searchFragment = SearchFragment(viewModel)
 
 
         binding.buttonFirst.setOnClickListener {
-           activity?.let {
-               searchFragment.show(it.supportFragmentManager,"Search Dialog")
-           }
+            activity?.let {
+                searchFragment.show(it.supportFragmentManager, "Search Dialog")
+            }
 //            openDocumentPicker()
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 //            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))

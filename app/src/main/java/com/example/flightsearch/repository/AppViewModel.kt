@@ -15,9 +15,15 @@ class AppViewModel(private val airportRepository: AirportRepository) :
     fun flights(): List<String> = TODO("Get List of Flight from AppDatabase ")
 
     init {
+       getAirports()
+    }
+    private fun getAirports(){
         viewModelScope.launch(Dispatchers.IO) {
             airports.postValue(airportRepository.getAll(1))
         }
+    }
+     fun searchAirport(query:String) = viewModelScope.launch(Dispatchers.IO) {
+        airports.postValue(airportRepository.search(query))
     }
 
     fun registerAirport(vararg data: AirportModel) {
