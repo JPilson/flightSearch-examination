@@ -13,4 +13,5 @@
     <string name="from">from</string>
     <string name="airport_name_placeholder">Airport Name Placeholder</string>
     <string name="country_placeholder">Country - Placeholder</string>
+    <string name="search_flight">Search Flight</string>
 </resources>
