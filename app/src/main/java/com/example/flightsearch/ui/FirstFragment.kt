@@ -1,5 +1,6 @@
 package com.example.flightsearch.ui
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flightsearch.adapters.AirportListAdapter
+import com.example.flightsearch.databinding.AirportPickerBinding
 import com.example.flightsearch.databinding.FragmentFirstBinding
 import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.AirportModel
@@ -37,17 +39,13 @@ class FirstFragment : Fragment() {
     private lateinit var contentResolver: ContentResolver
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
-    private lateinit var adapter: AirportListAdapter
-    private lateinit var recyclerView: RecyclerView
 
-    //    lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     companion object {
         private const val TAG = "FirstFragment"
         private const val FILE_PICKER = 2
+
     }
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -60,39 +58,72 @@ class FirstFragment : Fragment() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUp()
 
-        adapter = AirportListAdapter()
-        recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+    }
+
+    private fun setUp() {
         val appViewModelFactory =
             AppViewModelFactory(AirportRepository(AppDatabase.getDatabase(requireContext())))
         viewModel = ViewModelProvider(this, appViewModelFactory)[AppViewModel::class.java]
-//        adapter.setData(viewModel.airports.se)
-        viewModel.airports.observe(viewLifecycleOwner) {
-            adapter.setData(it)
-        }
-        recyclerView.adapter = adapter
-
         contentResolver = context?.contentResolver!!
-
         filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             openDocument(it)
         }
         searchFragment = SearchFragment(viewModel)
 
+        @SuppressLint("SetTextI18n")
+        binding.arrivePicker.label.text = "TO"
+        viewModel.departureAirport.observe(viewLifecycleOwner) {
+            setAirportPicker(
+                binding.departurePicker,
+                it,
+                SearchFragment.Companion.Tag.DEPARTURE_SEARCH
+            )
+        }
+        viewModel.destinationAirport.observe(viewLifecycleOwner) {
+            setAirportPicker(
+                binding.arrivePicker,
+                it,
+                SearchFragment.Companion.Tag.DESTINATION_SEARCH
+            )
+        }
 
         binding.buttonFirst.setOnClickListener {
-            activity?.let {
-                searchFragment.show(it.supportFragmentManager, "Search Dialog")
-            }
+
 //            openDocumentPicker()
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 //            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
         }
+
+
     }
+
+    @SuppressLint("SetTextI18n")
+    fun setAirportPicker(
+        view: AirportPickerBinding,
+        airport: AirportModel,
+        tag: SearchFragment.Companion.Tag
+    ) {
+        view.apply {
+            airportName.text = airport.name
+            countryName.text = "${airport.country} - ${airport.city}"
+            root.setOnClickListener {
+                activity?.let {
+                    searchFragment.setTag(tag)
+                    searchFragment.show(it.supportFragmentManager, "Search_Dialog")
+
+                }
+            }
+        }
+
+
+    }
+
 
     private fun insertToDB(airport: AirportModel) {
         try {

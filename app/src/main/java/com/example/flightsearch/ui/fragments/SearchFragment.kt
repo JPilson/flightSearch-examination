@@ -22,17 +22,14 @@ class SearchFragment(private val viewModel: AppViewModel) : DialogFragment() {
     private var _binding: FragmentSearchBinding? = null
     private lateinit var adapter: AirportListAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var tag: Tag
 
     private val binding get() = _binding!!
 
     companion object {
-        private var instance: SearchViewModel? = null
-        fun getInstance(): SearchFragment {
-            if (instance != null)
-                return instance as SearchFragment
-
-            instance = SearchViewModel()
-            return instance as SearchFragment
+        enum class Tag(tag: String) {
+            DEPARTURE_SEARCH("departure_search_dialog"),
+            DESTINATION_SEARCH("destination_search_dialog")
         }
     }
 
@@ -50,6 +47,10 @@ class SearchFragment(private val viewModel: AppViewModel) : DialogFragment() {
 
     }
 
+    fun setTag(it: Tag) {
+        tag = it
+    }
+
     private fun setSearchView() {
         binding.dismissBtn.setOnClickListener {
             dialog?.dismiss()
@@ -58,6 +59,7 @@ class SearchFragment(private val viewModel: AppViewModel) : DialogFragment() {
         binding.searchView.requestFocus()
         binding.searchView.setOnClickListener {
         }
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 binding.searchView.clearFocus()
@@ -66,22 +68,30 @@ class SearchFragment(private val viewModel: AppViewModel) : DialogFragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
                 return true
             }
-
         })
     }
 
     private fun setAdapter() {
-        adapter = AirportListAdapter()
+
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = AirportListAdapter().also {
+            it.setOnItemClickListener { airPort ->
+                Toast.makeText(requireContext(), airPort.name, Toast.LENGTH_SHORT).show()
+                when (tag) {
+                    Tag.DEPARTURE_SEARCH -> viewModel.setDepartureAirport(airPort)
+                    Tag.DESTINATION_SEARCH -> viewModel.setDestinationAirport(airPort)
+                }
+            }
+        }
         recyclerView.adapter = adapter
+
         viewModel.airports.observe(viewLifecycleOwner) {
             adapter.setData(it)
-//            Toast.makeText(requireContext(), " $it", Toast.LENGTH_SHORT).show()
         }
+
 
     }
 
@@ -91,7 +101,9 @@ class SearchFragment(private val viewModel: AppViewModel) : DialogFragment() {
             val width = android.view.WindowManager.LayoutParams.MATCH_PARENT;
             val height = android.view.WindowManager.LayoutParams.MATCH_PARENT
             it.window!!.setLayout(width, height)
-            it.window!!.setBackgroundDrawable(resources.getDrawable(R.drawable.frame_holder_background, null))
+            it.window!!.setBackgroundDrawable(
+                resources.getDrawable(R.drawable.frame_holder_background, null)
+            )
 
         }
         setSearchView()
