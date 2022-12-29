@@ -1,9 +1,8 @@
 package com.example.flightsearch.models
 
-import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlin.math.log
+import com.example.flightsearch.utils.Helpers
 
 @Entity(tableName = "tbl_airport")
 data class AirportModel(
@@ -24,35 +23,29 @@ data class AirportModel(
     val source: String
 ) {
     companion object {
-        private const val TAG = "AirportModel"
         fun fromString(it: String): AirportModel {
-            Log.d(TAG, "fromString: $it")
             val split = it.split(",")
-
-            val x = AirportModel(
+            return AirportModel(
                 split[0].toInt(),
                 split[0].toInt(),
-                formatString(split[1]),
-                formatString(split[2]),
-                formatString(split[3]),
-                formatString(split[4]),
-                formatString(split[5]),
-                formatString(split[6]),
-                formatString(split[7]),
-                formatString(split[8]),
-                formatString(split[9]),
-                formatString(split[10]),
-                formatString(split[11]),
-                formatString(split[12]),
-                formatString(split[13])
+                Helpers.formatString(split[1]),
+                Helpers.formatString(split[2]),
+                Helpers.formatString(split[3]),
+                Helpers.formatString(split[4]),
+                Helpers.formatString(split[5]),
+                Helpers.formatString(split[6]),
+                Helpers.formatString(split[7]),
+                Helpers.formatString(split[8]),
+                Helpers.formatString(split[9]),
+                Helpers.formatString(split[10]),
+                Helpers.formatString(split[11]),
+                Helpers.formatString(split[12]),
+                Helpers.formatString(split[13])
             )
-            Log.d(TAG, "fromString: ${x.name}")
-            return x
+
+
         }
 
-        private fun formatString(it: String): String {
-            var x = it.replace("\"", "")
-            return x
-        }
+
     }
 }
