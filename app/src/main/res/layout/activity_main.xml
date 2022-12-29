@@ -31,4 +31,10 @@
         android:layout_marginBottom="16dp"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
+    <include
+            android:id="@+id/lottie_layer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/uploading_data" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

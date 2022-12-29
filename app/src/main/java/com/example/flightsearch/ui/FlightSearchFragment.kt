@@ -47,7 +47,7 @@ class FlightSearchFragment : Fragment() {
     private fun setUp() {
 
         viewModel =
-            AppViewModelFactory.getAppViewInstance(this, AppDatabase.getDatabase(requireContext()))
+            AppViewModelFactory.getAppViewInstance(this,requireContext())
         viewModel.apply {
             departureAirport.observe(viewLifecycleOwner) {
                 binding.departureSelection.text = it.name

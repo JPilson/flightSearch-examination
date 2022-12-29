@@ -14,4 +14,8 @@
     <string name="airport_name_placeholder">Airport Name Placeholder</string>
     <string name="country_placeholder">Country - Placeholder</string>
     <string name="search_flight">Search Flight</string>
+    <string name="import_airport_data">Import Airport Data</string>
+    <string name="import_airline_data">Import Airline Data</string>
+    <string name="import_routes_data">Import Routes Data</string>
+    <string name="import_planes_data">Import Planes Data</string>
 </resources>

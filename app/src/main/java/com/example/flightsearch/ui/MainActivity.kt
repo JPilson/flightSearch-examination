@@ -1,7 +1,11 @@
 package com.example.flightsearch.ui
 
+import android.content.ContentResolver
 import android.content.Intent
+import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -10,18 +14,31 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 import com.example.flightsearch.R
 import com.example.flightsearch.databinding.ActivityMainBinding
 import com.example.flightsearch.db.AppDatabase
+import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.repository.AppViewModel
 import com.example.flightsearch.repository.AppViewModelFactory
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
-
+    private  val TAG = "MainActivity"
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     lateinit var viewModel: AppViewModel
+    private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
+    private lateinit var animationView: LottieAnimationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +53,14 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+        setUp()
 
+    }
+
+    fun setUp() {
+        viewModel = AppViewModelFactory.getAppViewInstance(this, this)
+        animationView = binding.lottieLayer.animationView;
+        animationView.setAnimation(R.raw.upload_animation)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -46,11 +70,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_import_airport_data -> {
+                saveAirportData()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -60,4 +84,59 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+
+    private fun loaderVisibility(visibility: Int) {
+        binding.lottieLayer.animationParentView.visibility = visibility
+        when (visibility) {
+            View.VISIBLE -> {
+                animationView.repeatMode = LottieDrawable.RESTART
+                animationView.playAnimation()
+
+            }
+            else -> {
+                animationView.pauseAnimation()
+            }
+        }
+
+    }
+
+    private fun saveAirportData() {
+        try {
+            loaderVisibility(View.VISIBLE)
+            filePickerResolver =  registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                openDocument(uri) {
+                    viewModel.registerAirport(AirportModel.fromString(it))
+                }
+            }
+            Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
+            Toast.makeText(this, "Something Went Wrong When Adding data", Toast.LENGTH_SHORT).show()
+        } finally {
+            loaderVisibility(View.INVISIBLE)
+        }
+    }
+
+    private fun saveFlightData() {
+
+    }
+
+    @Throws(IOException::class)
+    fun openDocument(uri: Uri?, forEachLine: (String) -> Unit) {
+        if (uri == null) {
+            Toast.makeText(this, "Failed to open File", Toast.LENGTH_SHORT).show()
+            return
+        }
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    forEachLine(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+
+    }
+
 }

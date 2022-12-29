@@ -3,8 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.flightsearch.ui.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+            android:id="@+id/action_import_airport_data"
+            android:orderInCategory="100"
+            android:title="@string/import_airport_data"
+            android:icon="@drawable/database_up"
+             />
+    <item
+            android:id="@+id/action_import_airline_data"
+            android:orderInCategory="100"
+            android:title="@string/import_airline_data"
+            android:icon="@drawable/database_up"
+           />
+    <item
+            android:id="@+id/action_import_routes_data"
+            android:orderInCategory="100"
+            android:title="@string/import_routes_data"
+            android:icon="@drawable/database_up"
+             />
+    <item
+            android:id="@+id/action_import_planes_data"
+            android:orderInCategory="100"
+            android:title="@string/import_planes_data"
+            android:icon="@drawable/database_up"
+            />
 </menu>

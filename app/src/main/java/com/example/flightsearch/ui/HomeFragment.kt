@@ -35,7 +35,6 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var searchFragment: SearchDialogFragment
-    private lateinit var contentResolver: ContentResolver
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
 
@@ -67,11 +66,7 @@ class HomeFragment : Fragment() {
 
     private fun setUp() {
         val viewModel =
-            AppViewModelFactory.getAppViewInstance(this, AppDatabase.getDatabase(requireContext()))
-        contentResolver = context?.contentResolver!!
-        filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
-            openDocument(it)
-        }
+            AppViewModelFactory.getAppViewInstance(this, requireContext())
         searchFragment = SearchDialogFragment(viewModel)
 
         @SuppressLint("SetTextI18n")
@@ -138,24 +133,5 @@ class HomeFragment : Fragment() {
         filePickerResolver.launch(arrayOf("*/*"))
     }
 
-
-    @Throws(IOException::class)
-    fun openDocument(uri: Uri?) {
-        if (uri == null) {
-            Toast.makeText(context, "Failed to open File", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val stringBuilder = StringBuilder()
-        contentResolver.openInputStream(uri)?.use { inputStream ->
-            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    Log.d(TAG, "openDocument: $line")
-                    line = reader.readLine()
-                }
-            }
-        }
-
-    }
 
 }
