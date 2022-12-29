@@ -1,9 +1,6 @@
 package com.example.flightsearch.ui
 
-import android.content.ContentResolver
-import android.content.Intent
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -18,22 +15,19 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.example.flightsearch.R
 import com.example.flightsearch.databinding.ActivityMainBinding
-import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.repository.AppViewModel
 import com.example.flightsearch.repository.AppViewModelFactory
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
-    private  val TAG = "MainActivity"
+    private val TAG = "MainActivity"
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     lateinit var viewModel: AppViewModel
@@ -61,6 +55,8 @@ class MainActivity : AppCompatActivity() {
         viewModel = AppViewModelFactory.getAppViewInstance(this, this)
         animationView = binding.lottieLayer.animationView;
         animationView.setAnimation(R.raw.upload_animation)
+
+        setAirportData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_import_airport_data -> {
-                saveAirportData()
+                filePickerResolver.launch(arrayOf("*/*"))
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -100,21 +96,26 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun saveAirportData() {
-        try {
-            loaderVisibility(View.VISIBLE)
-            filePickerResolver =  registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                openDocument(uri) {
-                    viewModel.registerAirport(AirportModel.fromString(it))
+    private fun setAirportData() {
+        filePickerResolver =
+            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                try {
+                    loaderVisibility(View.VISIBLE)
+                    openDocument(uri) {
+                        viewModel.registerAirport(AirportModel.fromString(it))
+                    }
+                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
+                    Toast.makeText(
+                        this,
+                        "Something Went Wrong When Adding data",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } finally {
+                    loaderVisibility(View.INVISIBLE)
                 }
             }
-            Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
-            Toast.makeText(this, "Something Went Wrong When Adding data", Toast.LENGTH_SHORT).show()
-        } finally {
-            loaderVisibility(View.INVISIBLE)
-        }
     }
 
     private fun saveFlightData() {

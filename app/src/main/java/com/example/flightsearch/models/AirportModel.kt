@@ -1,7 +1,9 @@
 package com.example.flightsearch.models
 
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.math.log
 
 @Entity(tableName = "tbl_airport")
 data class AirportModel(
@@ -22,25 +24,35 @@ data class AirportModel(
     val source: String
 ) {
     companion object {
+        private const val TAG = "AirportModel"
         fun fromString(it: String): AirportModel {
+            Log.d(TAG, "fromString: $it")
             val split = it.split(",")
-            return AirportModel(
-                0,
+
+            val x = AirportModel(
                 split[0].toInt(),
-                split[1],
-                split[2],
-                split[3],
-                split[4],
-                split[5],
-                split[6],
-                split[7],
-                split[8],
-                split[9],
-                split[10],
-                split[11],
-                split[12],
-                split[13]
+                split[0].toInt(),
+                formatString(split[1]),
+                formatString(split[2]),
+                formatString(split[3]),
+                formatString(split[4]),
+                formatString(split[5]),
+                formatString(split[6]),
+                formatString(split[7]),
+                formatString(split[8]),
+                formatString(split[9]),
+                formatString(split[10]),
+                formatString(split[11]),
+                formatString(split[12]),
+                formatString(split[13])
             )
+            Log.d(TAG, "fromString: ${x.name}")
+            return x
+        }
+
+        private fun formatString(it: String): String {
+            var x = it.replace("\"", "")
+            return x
         }
     }
 }
