@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.flightsearch.R
 import com.example.flightsearch.databinding.AirportPickerBinding
@@ -23,7 +22,7 @@ import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.repository.AirportRepository
 import com.example.flightsearch.repository.AppViewModel
 import com.example.flightsearch.repository.AppViewModelFactory
-import com.example.flightsearch.ui.fragments.SearchFragment
+import com.example.flightsearch.ui.fragments.SearchDialogFragment
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -35,7 +34,7 @@ class HomeFragment : Fragment() {
 
 
     private var _binding: FragmentHomeBinding? = null
-    private lateinit var searchFragment: SearchFragment
+    private lateinit var searchFragment: SearchDialogFragment
     private lateinit var contentResolver: ContentResolver
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
@@ -74,7 +73,7 @@ class HomeFragment : Fragment() {
         filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             openDocument(it)
         }
-        searchFragment = SearchFragment(viewModel)
+        searchFragment = SearchDialogFragment(viewModel)
 
         @SuppressLint("SetTextI18n")
         binding.arrivePicker.label.text = "TO"
@@ -82,14 +81,14 @@ class HomeFragment : Fragment() {
             setAirportPicker(
                 binding.departurePicker,
                 it,
-                SearchFragment.Companion.Tag.DEPARTURE_SEARCH
+                SearchDialogFragment.Companion.Tag.DEPARTURE_SEARCH
             )
         }
         viewModel.destinationAirport.observe(viewLifecycleOwner) {
             setAirportPicker(
                 binding.arrivePicker,
                 it,
-                SearchFragment.Companion.Tag.DESTINATION_SEARCH
+                SearchDialogFragment.Companion.Tag.DESTINATION_SEARCH
             )
         }
         binding.buttonFirst.setOnClickListener {
@@ -104,7 +103,7 @@ class HomeFragment : Fragment() {
     fun setAirportPicker(
         view: AirportPickerBinding,
         airport: AirportModel,
-        tag: SearchFragment.Companion.Tag
+        tag: SearchDialogFragment.Companion.Tag
     ) {
         view.apply {
             airportName.text = airport.name

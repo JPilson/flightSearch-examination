@@ -1,9 +1,6 @@
 package com.example.flightsearch.ui.fragments
 
-import android.app.Dialog
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +14,7 @@ import com.example.flightsearch.adapters.AirportListAdapter
 import com.example.flightsearch.databinding.FragmentSearchBinding
 import com.example.flightsearch.repository.AppViewModel
 
-class SearchFragment(private val viewModel: AppViewModel) : DialogFragment() {
+class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment() {
     private val TAG = "SearchFragment"
     private var _binding: FragmentSearchBinding? = null
     private lateinit var adapter: AirportListAdapter

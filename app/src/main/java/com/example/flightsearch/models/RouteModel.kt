@@ -17,6 +17,8 @@ data class RouteModel(
     val equipment: String,
 
     ) {
+
+    fun areItemsTheSame(other: RouteModel): Boolean = (this.copy(id = other.id) == other)
     companion object {
         fun fromString(it: String): RouteModel {
             val split = it.split(",")
@@ -33,6 +35,7 @@ data class RouteModel(
                 split[0],
             )
         }
-    }
 
+    }
 }
+
