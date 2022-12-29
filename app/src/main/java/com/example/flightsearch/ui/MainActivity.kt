@@ -25,6 +25,8 @@ import com.example.flightsearch.repository.AppViewModelFactory
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.util.Timer
+import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var viewModel: AppViewModel
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
+    private lateinit var filePickerAirlineResolver:ActivityResultLauncher<Array<String>>
+    private lateinit var filePickerRoutesResolver:ActivityResultLauncher<Array<String>>
+    private lateinit var filePickerPlanesResolver:ActivityResultLauncher<Array<String>>
     private lateinit var animationView: LottieAnimationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,15 +87,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loaderVisibility(visibility: Int) {
-        binding.lottieLayer.animationParentView.visibility = visibility
+
         when (visibility) {
             View.VISIBLE -> {
+                binding.lottieLayer.animationParentView.visibility = visibility
                 animationView.repeatMode = LottieDrawable.RESTART
                 animationView.playAnimation()
 
             }
             else -> {
-                animationView.pauseAnimation()
+                val timer = Timer()
+                timer.schedule(object : TimerTask() {
+                    override fun run() {
+                        animationView.pauseAnimation()
+                        binding.lottieLayer.animationParentView.visibility = visibility
+                    }
+                }, 2000)
             }
         }
 
@@ -118,8 +130,32 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun saveFlightData() {
+    private fun setAirlineFilePicker() {
 
+    }
+    private fun setPlaneFilePicker(){
+
+    }
+    private fun setRoutesFilePicker(){
+        filePickerRoutesResolver =
+            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                try {
+                    loaderVisibility(View.VISIBLE)
+                    openDocument(uri) {
+                        viewModel.registerAirport(AirportModel.fromString(it))
+                    }
+                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
+                    Toast.makeText(
+                        this,
+                        "Something Went Wrong When Adding data",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } finally {
+                    loaderVisibility(View.INVISIBLE)
+                }
+            }
     }
 
     @Throws(IOException::class)

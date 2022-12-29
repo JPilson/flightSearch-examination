@@ -14,6 +14,8 @@ import com.example.flightsearch.models.*
 abstract class AppDatabase : RoomDatabase() {
     abstract fun airportDao(): AirportDao
     abstract fun routeDao():RouteDao
+    abstract fun airlineDao():AirlineDao
+    abstract fun planeDao():PlaneDao
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null

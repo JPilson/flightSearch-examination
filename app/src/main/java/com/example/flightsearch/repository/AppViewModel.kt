@@ -1,11 +1,10 @@
 package com.example.flightsearch.repository
 
-import android.app.Application
-import android.content.Context
 import androidx.lifecycle.*
-import androidx.navigation.NavArgs
 import com.example.flightsearch.db.AppDatabase
+import com.example.flightsearch.models.AirlineModel
 import com.example.flightsearch.models.AirportModel
+import com.example.flightsearch.models.PlaneModel
 import com.example.flightsearch.models.RouteModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +13,9 @@ class AppViewModel(private val db: AppDatabase) :
     ViewModel() {
     private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
     private val routeRepository: RouteRepository by lazy { RouteRepository(db.routeDao()) }
+    private val airlineRepository: AirlineRepository by lazy { AirlineRepository(db.airlineDao()) }
+    private val planeRepository: PlaneRepository by lazy { PlaneRepository(db.planeDao()) }
+
 
     val airports: MutableLiveData<List<AirportModel>> by lazy { MutableLiveData() }
     val destinationAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
@@ -40,6 +42,24 @@ class AppViewModel(private val db: AppDatabase) :
     fun registerAirport(vararg data: AirportModel) {
         viewModelScope.launch(Dispatchers.IO) {
             airportRepository.registerAirport(*data)
+        }
+    }
+
+    fun registerRoutes(vararg data: RouteModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            routeRepository.register(*data)
+        }
+    }
+
+    fun registerPlanes(vararg data: PlaneModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            planeRepository.register(*data)
+        }
+    }
+
+    fun registerAirline(vararg data: AirlineModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            airlineRepository.register(*data)
         }
     }
 
