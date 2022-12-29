@@ -50,7 +50,6 @@ class FlightSearchFragment : Fragment() {
             AppViewModelFactory.getAppViewInstance(this, AppDatabase.getDatabase(requireContext()))
         viewModel.apply {
             departureAirport.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), "${it.name}", Toast.LENGTH_SHORT).show()
                 binding.departureSelection.text = it.name
             }
             destinationAirport.observe(viewLifecycleOwner) {
