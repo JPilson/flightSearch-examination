@@ -6,14 +6,20 @@ import androidx.lifecycle.*
 import androidx.navigation.NavArgs
 import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.AirportModel
+import com.example.flightsearch.models.RouteModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AppViewModel(private val airportRepository: AirportRepository) :
+class AppViewModel(private val db: AppDatabase) :
     ViewModel() {
+    private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
+    private val routeRepository: RouteRepository by lazy { RouteRepository(db.routeDao()) }
+
     val airports: MutableLiveData<List<AirportModel>> by lazy { MutableLiveData() }
     val destinationAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
     val departureAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
+    val foundRoutes: MutableLiveData<List<RouteModel>> by lazy { MutableLiveData() }
+
     fun flights(): List<String> = TODO("Get List of Flight from AppDatabase ")
 
     init {
@@ -34,6 +40,28 @@ class AppViewModel(private val airportRepository: AirportRepository) :
     fun registerAirport(vararg data: AirportModel) {
         viewModelScope.launch(Dispatchers.IO) {
             airportRepository.registerAirport(*data)
+        }
+    }
+
+    fun getRoutesBySourceAndDestination(
+        sourceId: Int,
+        destinationId: Int,
+        nonStopOnly: Boolean = false
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            when (nonStopOnly) {
+                true -> {
+                    routeRepository.getNonStopBySourceAndDestination(sourceId, destinationId).also {
+                        foundRoutes.postValue(it)
+                    }
+                }
+                false -> {
+                    routeRepository.getBySourceAndDestination(sourceId, destinationId).also {
+                        foundRoutes.postValue(it)
+                    }
+                }
+            }
+
         }
     }
 

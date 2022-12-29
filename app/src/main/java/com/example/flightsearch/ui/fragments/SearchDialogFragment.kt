@@ -15,7 +15,6 @@ import com.example.flightsearch.databinding.FragmentSearchBinding
 import com.example.flightsearch.repository.AppViewModel
 
 class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment() {
-    private val TAG = "SearchFragment"
     private var _binding: FragmentSearchBinding? = null
     private lateinit var adapter: AirportListAdapter
     private lateinit var recyclerView: RecyclerView
@@ -33,7 +32,7 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -76,7 +75,7 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = AirportListAdapter().also {
             it.setOnItemClickListener { airPort ->
-                Toast.makeText(requireContext(), airPort.name, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), airPort.name, Toast.LENGTH_SHORT).show()
                 when (tag) {
                     Tag.DEPARTURE_SEARCH -> viewModel.setDepartureAirport(airPort)
                     Tag.DESTINATION_SEARCH -> viewModel.setDestinationAirport(airPort)

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flightsearch.databinding.FlightTicketBinding
+import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.models.RouteModel
 
 class RouteListAdapter : RecyclerView.Adapter<RouteListAdapter.RouteViewHolder>() {
@@ -43,6 +44,10 @@ class RouteListAdapter : RecyclerView.Adapter<RouteListAdapter.RouteViewHolder>(
     }
 
     override fun getItemCount(): Int = differ.currentList.size
+
+    fun setData(routes: List<RouteModel>) {
+        differ.submitList(routes)
+    }
 
     fun setOnItemClickListener(listener: (RouteModel) -> Unit) {
         onItemClickListener = listener

@@ -66,9 +66,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUp() {
-        val appViewModelFactory =
-            AppViewModelFactory(AirportRepository(AppDatabase.getDatabase(requireContext())))
-        viewModel = ViewModelProvider(this, appViewModelFactory)[AppViewModel::class.java]
+        val viewModel =
+            AppViewModelFactory.getAppViewInstance(this, AppDatabase.getDatabase(requireContext()))
         contentResolver = context?.contentResolver!!
         filePickerResolver = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             openDocument(it)
