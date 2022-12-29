@@ -6,7 +6,7 @@ import com.example.flightsearch.utils.Helpers
 
 @Entity(tableName = "tbl_airport")
 data class AirportModel(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val airportId: Int,
     val name: String,
     val city: String,
@@ -26,7 +26,7 @@ data class AirportModel(
         fun fromString(it: String): AirportModel {
             val split = it.split(",")
             return AirportModel(
-                split[0].toInt(),
+                0,
                 split[0].toInt(),
                 Helpers.formatString(split[1]),
                 Helpers.formatString(split[2]),

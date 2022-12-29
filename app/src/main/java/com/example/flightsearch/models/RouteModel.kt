@@ -1,11 +1,15 @@
 package com.example.flightsearch.models
 
+import android.util.Log
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.flightsearch.utils.Helpers
 
 @Entity(tableName = "tbl_route")
+
 data class RouteModel(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val airline: String,
     val airlineId: String,
     val sourceAirport: String,
@@ -19,20 +23,23 @@ data class RouteModel(
     ) {
 
     fun areItemsTheSame(other: RouteModel): Boolean = (this.copy(id = other.id) == other)
+
     companion object {
+        private const val TAG = "RouteModel"
         fun fromString(it: String): RouteModel {
+            Log.d(TAG, "fromString: $it")
             val split = it.split(",")
             return RouteModel(
                 0,
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0].toInt(),
-                split[0],
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[1]),
+                Helpers.formatString(split[2]),
+                Helpers.formatString(split[3]),
+                Helpers.formatString(split[4]),
+                Helpers.formatString(split[5]),
+                Helpers.formatString(split[6]),
+                Helpers.formatString(split[7]).toInt(),
+                Helpers.formatString(split[8]),
             )
         }
 

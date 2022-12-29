@@ -2,6 +2,7 @@ package com.example.flightsearch.ui
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -19,9 +20,13 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.example.flightsearch.R
 import com.example.flightsearch.databinding.ActivityMainBinding
+import com.example.flightsearch.models.AirlineModel
 import com.example.flightsearch.models.AirportModel
+import com.example.flightsearch.models.PlaneModel
+import com.example.flightsearch.models.RouteModel
 import com.example.flightsearch.repository.AppViewModel
 import com.example.flightsearch.repository.AppViewModelFactory
+import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -34,9 +39,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var viewModel: AppViewModel
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
-    private lateinit var filePickerAirlineResolver:ActivityResultLauncher<Array<String>>
-    private lateinit var filePickerRoutesResolver:ActivityResultLauncher<Array<String>>
-    private lateinit var filePickerPlanesResolver:ActivityResultLauncher<Array<String>>
+    private lateinit var filePickerAirlineResolver: ActivityResultLauncher<Array<String>>
+    private lateinit var filePickerRoutesResolver: ActivityResultLauncher<Array<String>>
+    private lateinit var filePickerPlanesResolver: ActivityResultLauncher<Array<String>>
     private lateinit var animationView: LottieAnimationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         animationView.setAnimation(R.raw.upload_animation)
 
         setAirportData()
+        setAirlineFilePicker()
+        setRoutesFilePicker()
+        setPlaneFilePicker()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -76,6 +84,18 @@ class MainActivity : AppCompatActivity() {
                 filePickerResolver.launch(arrayOf("*/*"))
                 true
             }
+            R.id.action_import_airline_data -> {
+                filePickerAirlineResolver.launch(arrayOf("*/*"))
+                true
+            }
+            R.id.action_import_planes_data -> {
+                filePickerPlanesResolver.launch(arrayOf("*/*"))
+                true
+            }
+            R.id.action_import_routes_data -> {
+                filePickerRoutesResolver.launch(arrayOf("*/*"))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -86,7 +106,8 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
-    private fun loaderVisibility(visibility: Int) {
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun loaderVisibility(visibility: Int, now: Boolean = false) {
 
         when (visibility) {
             View.VISIBLE -> {
@@ -96,13 +117,18 @@ class MainActivity : AppCompatActivity() {
 
             }
             else -> {
-                val timer = Timer()
-                timer.schedule(object : TimerTask() {
-                    override fun run() {
-                        animationView.pauseAnimation()
-                        binding.lottieLayer.animationParentView.visibility = visibility
-                    }
-                }, 2000)
+                if (now) {
+                    animationView.pauseAnimation()
+                    binding.lottieLayer.animationParentView.visibility = visibility
+                    return
+                }
+                GlobalScope.launch(Dispatchers.Main) {
+                    delay(2000)
+                    animationView.pauseAnimation()
+                    binding.lottieLayer.animationParentView.visibility = visibility
+                }
+
+
             }
         }
 
@@ -117,6 +143,7 @@ class MainActivity : AppCompatActivity() {
                         viewModel.registerAirport(AirportModel.fromString(it))
                     }
                     Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                    loaderVisibility(View.INVISIBLE)
                 } catch (e: Exception) {
                     Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
                     Toast.makeText(
@@ -124,36 +151,74 @@ class MainActivity : AppCompatActivity() {
                         "Something Went Wrong When Adding data",
                         Toast.LENGTH_SHORT
                     ).show()
-                } finally {
-                    loaderVisibility(View.INVISIBLE)
+                    loaderVisibility(View.INVISIBLE, true)
                 }
             }
     }
 
     private fun setAirlineFilePicker() {
-
-    }
-    private fun setPlaneFilePicker(){
-
-    }
-    private fun setRoutesFilePicker(){
-        filePickerRoutesResolver =
+        filePickerAirlineResolver =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                 try {
                     loaderVisibility(View.VISIBLE)
                     openDocument(uri) {
-                        viewModel.registerAirport(AirportModel.fromString(it))
+                        viewModel.registerAirline(AirlineModel.fromString(it))
                     }
                     Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                    loaderVisibility(View.INVISIBLE)
                 } catch (e: Exception) {
-                    Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
+                    Log.e(TAG, "setAirlineFilePicker: ${e.localizedMessage}\n" +
+                            " ${e.stackTrace}", )
                     Toast.makeText(
                         this,
                         "Something Went Wrong When Adding data",
                         Toast.LENGTH_SHORT
                     ).show()
-                } finally {
+                    loaderVisibility(View.INVISIBLE, true)
+                }
+            }
+    }
+
+    private fun setPlaneFilePicker() {
+        filePickerPlanesResolver =
+            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                try {
+                    loaderVisibility(View.VISIBLE)
+                    openDocument(uri) {
+                        viewModel.registerPlanes(PlaneModel.fromString(it))
+                    }
+                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
                     loaderVisibility(View.INVISIBLE)
+                } catch (e: Exception) {
+                    Log.e(TAG, "setPlaneFilePicker:${e.localizedMessage}\n ${e.stackTrace} " )
+                    Toast.makeText(
+                        this,
+                        "Something Went Wrong When Adding data",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    loaderVisibility(View.INVISIBLE, true)
+                }
+            }
+    }
+
+    private fun setRoutesFilePicker() {
+        filePickerRoutesResolver =
+            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                try {
+                    loaderVisibility(View.VISIBLE)
+                    openDocument(uri) {
+                        viewModel.registerRoutes(RouteModel.fromString(it))
+                    }
+                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                    loaderVisibility(View.INVISIBLE)
+                } catch (e: Exception) {
+                    Log.e(TAG, "setRoutesFilePicker: ${e.localizedMessage}\n ${e.stackTrace}", )
+                    Toast.makeText(
+                        this,
+                        "Something Went Wrong When Adding data",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    loaderVisibility(View.INVISIBLE, true)
                 }
             }
     }

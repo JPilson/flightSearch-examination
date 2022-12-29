@@ -2,6 +2,7 @@ package com.example.flightsearch.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.flightsearch.utils.Helpers
 
 @Entity(tableName = "tbl_airline")
 data class AirlineModel(
@@ -19,15 +20,15 @@ data class AirlineModel(
         fun fromString(it: String): AirlineModel {
             val split = it.split(",")
             return AirlineModel(
-                0,
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
-                split[0],
+                split[0].toInt(),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
+                Helpers.formatString(split[0]),
 
                 )
         }

@@ -1,6 +1,7 @@
 package com.example.flightsearch.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,8 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
     private val binding get() = _binding!!
 
     companion object {
+        private const val TAG = "SearchDialogFragment"
+
         enum class Tag(tag: String) {
             DEPARTURE_SEARCH("departure_search_dialog"),
             DESTINATION_SEARCH("destination_search_dialog")
@@ -75,18 +78,20 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = AirportListAdapter().also {
             it.setOnItemClickListener { airPort ->
-//                Toast.makeText(requireContext(), airPort.name, Toast.LENGTH_SHORT).show()
+
                 when (tag) {
                     Tag.DEPARTURE_SEARCH -> viewModel.setDepartureAirport(airPort)
                     Tag.DESTINATION_SEARCH -> viewModel.setDestinationAirport(airPort)
                 }
+                dialog?.dismiss()
             }
         }
-        recyclerView.adapter = adapter
 
         viewModel.airports.observe(viewLifecycleOwner) {
+            Log.d(TAG, "setAdapter: $it")
             adapter.setData(it)
         }
+        recyclerView.adapter = adapter
 
 
     }

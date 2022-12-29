@@ -25,8 +25,8 @@ class AppViewModel(private val db: AppDatabase) :
     fun flights(): List<String> = TODO("Get List of Flight from AppDatabase ")
 
     init {
-        setDepartureAirport(AirportModel.fromString("1,Select Country of Departure,City,Country,\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
-        setDestinationAirport(AirportModel.fromString("1,Select Country of Destination,City,Country,\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
+        setDepartureAirport(AirportModel.fromString("1,Select Country of Departure,City,Country,\"DEFAULT\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
+        setDestinationAirport(AirportModel.fromString("1,Select Country of Destination,City,Country,\"DEFAULT\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
     }
 
     private fun getAirports() {

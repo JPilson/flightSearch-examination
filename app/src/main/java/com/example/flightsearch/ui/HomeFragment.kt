@@ -37,6 +37,8 @@ class HomeFragment : Fragment() {
     private lateinit var searchFragment: SearchDialogFragment
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
+    private var destinationDefault: String = "DEFAULT"
+
 
     companion object {
         private const val TAG = "FirstFragment"
@@ -86,7 +88,27 @@ class HomeFragment : Fragment() {
             )
         }
         binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            viewModel.departureAirport.value?.let { source ->
+                if (source.IATA == destinationDefault) {
+                    Toast.makeText(requireContext(), "Select Source", Toast.LENGTH_SHORT)
+                        .show()
+                    return@setOnClickListener
+                }
+
+                viewModel.destinationAirport.value?.let { destination ->
+                    if (destination.IATA == destinationDefault) {
+                        Toast.makeText(requireContext(), "Select Destination", Toast.LENGTH_SHORT)
+                            .show()
+                        return@setOnClickListener
+                    }
+
+                    findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+                } ?: Toast.makeText(requireContext(), "Select Destination", Toast.LENGTH_SHORT)
+                    .show()
+
+
+            } ?: Toast.makeText(requireContext(), "Select Source", Toast.LENGTH_SHORT).show()
+
 //            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
         }
 
