@@ -6,6 +6,7 @@
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:padding="20dp"
+        android:layout_marginVertical="5dp"
         android:background="@drawable/gradient_background"
         >
 
@@ -66,7 +67,7 @@
             tools:layout_editor_absoluteX="20dp">
 
         <TextView
-                android:id="@+id/departure_airport"
+                android:id="@+id/source_airport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="AO LDA"
@@ -88,14 +89,14 @@
                 android:text="03h 30m"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="@+id/departure_airport"
-                app:layout_constraintTop_toTopOf="@+id/arrive_airport"
+                app:layout_constraintBottom_toBottomOf="@+id/source_airport"
+                app:layout_constraintTop_toTopOf="@+id/destination_airport"
                 app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/departure_airport"
-                app:layout_constraintEnd_toEndOf="@+id/arrive_airport"/>
+                app:layout_constraintStart_toStartOf="@+id/source_airport"
+                app:layout_constraintEnd_toEndOf="@+id/destination_airport"/>
 
         <TextView
-                android:id="@+id/arrive_airport"
+                android:id="@+id/destination_airport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DL"
@@ -123,7 +124,7 @@
 
         <LinearLayout
                 android:id="@+id/block_3_1"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -131,23 +132,23 @@
                 android:orientation="horizontal"
                 android:gravity="center"
                 app:layout_constraintEnd_toStartOf="@+id/block_3_2"
-                app:layout_constraintHorizontal_bias="0.0">
+                app:layout_constraintHorizontal_bias="0.0"
+                android:layout_marginEnd="8dp">
 
             <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:background="@drawable/rounded_background"
-
-                    />
+                    android:contentDescription="@string/airlinelogo" />
 
             <TextView
                     android:id="@+id/airline_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="VN Airline"
+                    android:text="@string/airline_name"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginStart="10dp"
-                    />
+                    android:layout_marginStart="10dp" />
 
         </LinearLayout>
 

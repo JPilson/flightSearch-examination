@@ -2,12 +2,34 @@ package com.example.flightsearch.models
 
 import android.util.Log
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.flightsearch.utils.Helpers
 
-@Entity(tableName = "tbl_route")
-
+@Entity(
+    tableName = "tbl_route",
+    foreignKeys = [
+        ForeignKey(
+            entity = AirlineModel::class,
+            parentColumns = ["airlineId"],
+            childColumns = ["airlineId"],
+            onUpdate = CASCADE
+        ),
+        ForeignKey(
+            entity = AirportModel::class,
+            parentColumns = ["airportId"],
+            childColumns = ["sourceAirportId"],
+            onUpdate = CASCADE
+        ), ForeignKey(
+            entity = AirportModel::class,
+            parentColumns = ["airportId"],
+            childColumns = [ "destinationAirportId"],
+            onUpdate = CASCADE
+        ),
+    ]
+)
 data class RouteModel(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val airline: String,

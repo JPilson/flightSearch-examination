@@ -61,12 +61,19 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query?.isEmpty() == true) {
+                    return false
+                }
                 binding.searchView.clearFocus()
                 query?.let { viewModel.searchAirport("%${it.lowercase()}%") }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText?.isEmpty() == true) {
+                    return false
+                }
+                newText?.let { viewModel.searchAirport("%${it.lowercase()}%") }
                 return true
             }
         })

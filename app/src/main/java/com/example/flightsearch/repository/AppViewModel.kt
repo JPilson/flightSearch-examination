@@ -1,16 +1,19 @@
 package com.example.flightsearch.repository
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.flightsearch.db.AppDatabase
-import com.example.flightsearch.models.AirlineModel
-import com.example.flightsearch.models.AirportModel
-import com.example.flightsearch.models.PlaneModel
-import com.example.flightsearch.models.RouteModel
+import com.example.flightsearch.models.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class AppViewModel(private val db: AppDatabase) :
     ViewModel() {
+    companion object {
+        private const val TAG = "AppViewModel"
+    }
+
     private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
     private val routeRepository: RouteRepository by lazy { RouteRepository(db.routeDao()) }
     private val airlineRepository: AirlineRepository by lazy { AirlineRepository(db.airlineDao()) }
@@ -20,7 +23,8 @@ class AppViewModel(private val db: AppDatabase) :
     val airports: MutableLiveData<List<AirportModel>> by lazy { MutableLiveData() }
     val destinationAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
     val departureAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
-    val foundRoutes: MutableLiveData<List<RouteModel>> by lazy { MutableLiveData() }
+    val foundRoutes: MutableLiveData<List<TicketModel>> by lazy { MutableLiveData() }
+    val possibleTickets: MutableLiveData<List<TicketModel>> by lazy { MutableLiveData() }
 
     fun flights(): List<String> = TODO("Get List of Flight from AppDatabase ")
 
@@ -79,6 +83,11 @@ class AppViewModel(private val db: AppDatabase) :
                     routeRepository.getBySourceAndDestination(sourceId, destinationId).also {
                         foundRoutes.postValue(it)
                     }
+                    routeRepository.getBySourceAndDestinationWithAirline(sourceId, destinationId)
+                        .also {
+                            Log.d(TAG, "getRoutesBySourceAndDestination: $it")
+//                        foundRoutes.postValue(it)
+                        }
                 }
             }
 

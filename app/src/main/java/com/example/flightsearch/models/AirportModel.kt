@@ -1,10 +1,16 @@
 package com.example.flightsearch.models
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.flightsearch.utils.Helpers
 
-@Entity(tableName = "tbl_airport")
+@Entity(
+    tableName = "tbl_airport", indices = [
+        Index(value = ["airportId"], unique = true),
+        Index(name = "airport_unique",value = ["name", "airportId", "country"], unique = true)
+    ]
+)
 data class AirportModel(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val airportId: Int,

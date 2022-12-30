@@ -1,5 +1,7 @@
 package com.example.flightsearch.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -70,8 +72,9 @@ class FlightSearchFragment : Fragment() {
     private fun setupRecyclerView() {
         routesAdapter = RouteListAdapter().also {
             it.setOnItemClickListener { route ->
-//                TODO: GO ot google maps
+//
                 Toast.makeText(requireContext(), "GO to Maps", Toast.LENGTH_SHORT).show()
+                openMaps()
             }
         }
 
@@ -98,6 +101,13 @@ class FlightSearchFragment : Fragment() {
         }
 
 
+    }
+
+    fun openMaps() {
+        val source = viewModel.departureAirport.value!!
+        val location = "geo:${source.latitude},${source.longitude}?z=15f"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(location))
+        startActivity(intent)
     }
 
     override fun onDestroyView() {

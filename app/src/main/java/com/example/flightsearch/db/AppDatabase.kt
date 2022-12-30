@@ -3,6 +3,7 @@ package com.example.flightsearch.db
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.flightsearch.models.*
 
 @androidx.room.Database(
@@ -11,6 +12,7 @@ import com.example.flightsearch.models.*
         AirlineModel::class, RouteModel::class, PlaneModel::class],
     version = 1, exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun airportDao(): AirportDao
     abstract fun routeDao():RouteDao

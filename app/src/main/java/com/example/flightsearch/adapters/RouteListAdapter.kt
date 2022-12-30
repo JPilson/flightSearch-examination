@@ -8,18 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.flightsearch.databinding.FlightTicketBinding
 import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.models.RouteModel
+import com.example.flightsearch.models.TicketModel
 
 class RouteListAdapter : RecyclerView.Adapter<RouteListAdapter.RouteViewHolder>() {
-    private val differCallback = object : DiffUtil.ItemCallback<RouteModel>() {
-        override fun areItemsTheSame(oldItem: RouteModel, newItem: RouteModel): Boolean {
-            return newItem.areItemsTheSame(oldItem)
+    private val differCallback = object : DiffUtil.ItemCallback<TicketModel>() {
+        override fun areItemsTheSame(oldItem: TicketModel, newItem: TicketModel): Boolean {
+            return newItem.route.areItemsTheSame(oldItem.route)
         }
 
-        override fun areContentsTheSame(oldItem: RouteModel, newItem: RouteModel): Boolean {
-            return newItem.areItemsTheSame(oldItem)
+        override fun areContentsTheSame(oldItem: TicketModel, newItem: TicketModel): Boolean {
+            return newItem.route.areItemsTheSame(oldItem.route)
         }
     }
-    private var onItemClickListener: ((RouteModel) -> Unit)? = null
+    private var onItemClickListener: ((TicketModel) -> Unit)? = null
     private val differ = AsyncListDiffer(this, differCallback)
 
     inner class RouteViewHolder(val binding: FlightTicketBinding) :
@@ -38,18 +39,20 @@ class RouteListAdapter : RecyclerView.Adapter<RouteListAdapter.RouteViewHolder>(
     override fun onBindViewHolder(holder: RouteViewHolder, position: Int) {
         val currentItem = differ.currentList[position]
         holder.binding.apply {
-
+            sourceAirport.text = currentItem.route.sourceAirport
+            destinationAirport.text = currentItem.route.destinationAirport
+            airlineName.text = currentItem?.airline?.name
         }
 
     }
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    fun setData(routes: List<RouteModel>) {
+    fun setData(routes: List<TicketModel>) {
         differ.submitList(routes)
     }
 
-    fun setOnItemClickListener(listener: (RouteModel) -> Unit) {
+    fun setOnItemClickListener(listener: (TicketModel) -> Unit) {
         onItemClickListener = listener
     }
 

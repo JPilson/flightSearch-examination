@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
                     loaderVisibility(View.INVISIBLE)
                 } catch (e: Exception) {
-                    Log.e(TAG, "setAirlineFilePicker: ${e.localizedMessage}\n" +
+                    Log.e(TAG, "setAirlineFilePicker: $e\n${e.localizedMessage}\n" +
                             " ${e.stackTrace}", )
                     Toast.makeText(
                         this,
