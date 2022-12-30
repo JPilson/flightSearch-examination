@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.flightsearch.R
@@ -53,6 +54,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -62,11 +64,11 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUp()
-
-
     }
 
     private fun setUp() {
+        (activity as AppCompatActivity).supportActionBar?.title = "Home"
+
         val viewModel =
             AppViewModelFactory.getAppViewInstance(this, requireContext())
         searchFragment = SearchDialogFragment(viewModel)
@@ -149,10 +151,6 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun openDocumentPicker() {
-        filePickerResolver.launch(arrayOf("*/*"))
     }
 
 

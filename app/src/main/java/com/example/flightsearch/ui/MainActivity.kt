@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setUp() {
+    private fun setUp() {
         viewModel = AppViewModelFactory.getAppViewInstance(this, this)
         animationView = binding.lottieLayer.animationView;
         animationView.setAnimation(R.raw.upload_animation)
@@ -138,21 +138,23 @@ class MainActivity : AppCompatActivity() {
     private fun setAirportData() {
         filePickerResolver =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                try {
-                    loaderVisibility(View.VISIBLE)
-                    openDocument(uri) {
-                        viewModel.registerAirport(AirportModel.fromString(it))
+                if (uri!=null) {
+                    try {
+                        loaderVisibility(View.VISIBLE)
+                        openDocument(uri) {
+                            viewModel.registerAirport(AirportModel.fromString(it))
+                        }
+                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                        loaderVisibility(View.INVISIBLE)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
+                        Toast.makeText(
+                            this,
+                            "Something Went Wrong When Adding data",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loaderVisibility(View.INVISIBLE, true)
                     }
-                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                    loaderVisibility(View.INVISIBLE)
-                } catch (e: Exception) {
-                    Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
-                    Toast.makeText(
-                        this,
-                        "Something Went Wrong When Adding data",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    loaderVisibility(View.INVISIBLE, true)
                 }
             }
     }
@@ -160,22 +162,24 @@ class MainActivity : AppCompatActivity() {
     private fun setAirlineFilePicker() {
         filePickerAirlineResolver =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                try {
-                    loaderVisibility(View.VISIBLE)
-                    openDocument(uri) {
-                        viewModel.registerAirline(AirlineModel.fromString(it))
+                if (uri!=null) {
+                    try {
+                        loaderVisibility(View.VISIBLE)
+                        openDocument(uri) {
+                            viewModel.registerAirline(AirlineModel.fromString(it))
+                        }
+                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                        loaderVisibility(View.INVISIBLE)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "setAirlineFilePicker: $e\n${e.localizedMessage}\n" +
+                                " ${e.stackTrace}", )
+                        Toast.makeText(
+                            this,
+                            "Something Went Wrong When Adding data",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loaderVisibility(View.INVISIBLE, true)
                     }
-                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                    loaderVisibility(View.INVISIBLE)
-                } catch (e: Exception) {
-                    Log.e(TAG, "setAirlineFilePicker: $e\n${e.localizedMessage}\n" +
-                            " ${e.stackTrace}", )
-                    Toast.makeText(
-                        this,
-                        "Something Went Wrong When Adding data",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    loaderVisibility(View.INVISIBLE, true)
                 }
             }
     }
@@ -183,21 +187,23 @@ class MainActivity : AppCompatActivity() {
     private fun setPlaneFilePicker() {
         filePickerPlanesResolver =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                try {
-                    loaderVisibility(View.VISIBLE)
-                    openDocument(uri) {
-                        viewModel.registerPlanes(PlaneModel.fromString(it))
+                if(uri!= null){
+                    try {
+                        loaderVisibility(View.VISIBLE)
+                        openDocument(uri) {
+                            viewModel.registerPlanes(PlaneModel.fromString(it))
+                        }
+                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                        loaderVisibility(View.INVISIBLE)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "setPlaneFilePicker:${e.localizedMessage}\n ${e.stackTrace} " )
+                        Toast.makeText(
+                            this,
+                            "Something Went Wrong When Adding data",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loaderVisibility(View.INVISIBLE, true)
                     }
-                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                    loaderVisibility(View.INVISIBLE)
-                } catch (e: Exception) {
-                    Log.e(TAG, "setPlaneFilePicker:${e.localizedMessage}\n ${e.stackTrace} " )
-                    Toast.makeText(
-                        this,
-                        "Something Went Wrong When Adding data",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    loaderVisibility(View.INVISIBLE, true)
                 }
             }
     }
@@ -205,21 +211,23 @@ class MainActivity : AppCompatActivity() {
     private fun setRoutesFilePicker() {
         filePickerRoutesResolver =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                try {
-                    loaderVisibility(View.VISIBLE)
-                    openDocument(uri) {
-                        viewModel.registerRoutes(RouteModel.fromString(it))
+                if (uri!=null) {
+                    try {
+                        loaderVisibility(View.VISIBLE)
+                        openDocument(uri) {
+                            viewModel.registerRoutes(RouteModel.fromString(it))
+                        }
+                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
+                        loaderVisibility(View.INVISIBLE)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "setRoutesFilePicker: ${e.localizedMessage}\n ${e.stackTrace}", )
+                        Toast.makeText(
+                            this,
+                            "Something Went Wrong When Adding data",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loaderVisibility(View.INVISIBLE, true)
                     }
-                    Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                    loaderVisibility(View.INVISIBLE)
-                } catch (e: Exception) {
-                    Log.e(TAG, "setRoutesFilePicker: ${e.localizedMessage}\n ${e.stackTrace}", )
-                    Toast.makeText(
-                        this,
-                        "Something Went Wrong When Adding data",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    loaderVisibility(View.INVISIBLE, true)
                 }
             }
     }
