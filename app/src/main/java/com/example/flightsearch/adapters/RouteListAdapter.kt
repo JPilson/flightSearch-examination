@@ -42,6 +42,9 @@ class RouteListAdapter : RecyclerView.Adapter<RouteListAdapter.RouteViewHolder>(
             sourceAirport.text = currentItem.route.sourceAirport
             destinationAirport.text = currentItem.route.destinationAirport
             airlineName.text = currentItem?.airline?.name
+            root.setOnClickListener {
+                onItemClickListener?.let { it1 -> it1(currentItem) }
+            }
         }
 
     }

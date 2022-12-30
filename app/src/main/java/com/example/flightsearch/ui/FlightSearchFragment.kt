@@ -71,8 +71,7 @@ class FlightSearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         routesAdapter = RouteListAdapter().also {
-            it.setOnItemClickListener { route ->
-//
+            it.setOnItemClickListener { _ ->
                 Toast.makeText(requireContext(), "GO to Maps", Toast.LENGTH_SHORT).show()
                 openMaps()
             }
@@ -103,7 +102,7 @@ class FlightSearchFragment : Fragment() {
 
     }
 
-    fun openMaps() {
+    private fun openMaps() {
         val source = viewModel.departureAirport.value!!
         val location = "geo:${source.latitude},${source.longitude}?z=15f"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(location))
