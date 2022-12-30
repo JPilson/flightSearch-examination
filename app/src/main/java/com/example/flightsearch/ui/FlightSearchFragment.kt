@@ -58,10 +58,10 @@ class FlightSearchFragment : Fragment() {
 
         viewModel =
             AppViewModelFactory.getAppViewInstance(this, requireContext())
-
-
-
         setupRecyclerView()
+        binding.swap.setOnClickListener {
+            viewModel.swapLocations()
+        }
     }
 
     private fun searchRoutes() {
@@ -80,7 +80,6 @@ class FlightSearchFragment : Fragment() {
         routesRecyclerView = binding.recyclerView
         routesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         viewModel.foundRoutes.observe(viewLifecycleOwner) {
-            Log.d(TAG, "setupRecyclerView: $it")
             routesAdapter.setData(it)
 
         }
@@ -102,12 +101,14 @@ class FlightSearchFragment : Fragment() {
 
     }
 
+
     private fun openMaps() {
         val source = viewModel.departureAirport.value!!
         val location = "geo:${source.latitude},${source.longitude}?z=15f"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(location))
         startActivity(intent)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

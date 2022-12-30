@@ -94,6 +94,12 @@ class AppViewModel(private val db: AppDatabase) :
         }
     }
 
+    fun swapLocations() {
+        val copy = departureAirport.value!!
+        setDepartureAirport(destinationAirport.value!!)
+        setDestinationAirport(copy)
+    }
+
     fun setDestinationAirport(it: AirportModel) = destinationAirport.postValue(it)
     fun setDepartureAirport(it: AirportModel) = departureAirport.postValue(it)
 
