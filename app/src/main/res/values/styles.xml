@@ -17,6 +17,7 @@
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:layout_margin">10dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:paddingVertical">10dp</item>
         <item name="android:textAlignment">center</item>
         <item name="android:background">@drawable/search_view_locations_background</item>
         <item name="android:textStyle">bold</item>

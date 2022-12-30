@@ -49,10 +49,15 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
     fun setTag(it: Tag) {
         tag = it
     }
+    private fun dismissDialog(){
+        viewModel.airports.postValue(listOf())
+        binding.searchView.setQuery("",false)
+        dialog?.dismiss()
+    }
 
     private fun setSearchView() {
         binding.dismissBtn.setOnClickListener {
-            dialog?.dismiss()
+           dismissDialog()
         }
 
         binding.searchView.requestFocus()
@@ -90,7 +95,7 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
                     Tag.DEPARTURE_SEARCH -> viewModel.setDepartureAirport(airPort)
                     Tag.DESTINATION_SEARCH -> viewModel.setDestinationAirport(airPort)
                 }
-                dialog?.dismiss()
+               dismissDialog()
             }
         }
 
