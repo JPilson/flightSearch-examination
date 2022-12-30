@@ -1,6 +1,8 @@
 package com.example.flightsearch.ui
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -31,6 +33,7 @@ class FlightSearchFragment : Fragment() {
     private lateinit var routesRecyclerView: RecyclerView
     private var sourceId: Int = 0
     private var destinationId: Int = 0
+    private lateinit var sharedPreferences: SharedPreferences
 
     companion object {
         private const val TAG = "FlightSearchFragment"
@@ -55,6 +58,8 @@ class FlightSearchFragment : Fragment() {
     }
 
     private fun setUp() {
+        sharedPreferences =
+            activity?.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)!!
 
         viewModel =
             AppViewModelFactory.getAppViewInstance(this, requireContext())
@@ -62,17 +67,46 @@ class FlightSearchFragment : Fragment() {
         binding.swap.setOnClickListener {
             viewModel.swapLocations()
         }
+
+        when (sharedPreferences.contains(MainActivity.SHARED_PREFERENCES_NON_STOP_STATE)) {
+            true -> binding.noStopFlightSwitch.isChecked =
+                sharedPreferences.getBoolean(MainActivity.SHARED_PREFERENCES_NON_STOP_STATE, false)
+            false -> saveNoStopSwitchState()
+
+        }
+        binding.noStopFlightSwitch.setOnCheckedChangeListener { _, _ ->
+            saveNoStopSwitchState()
+        }
+
+    }
+
+    private fun saveNoStopSwitchState() {
+        sharedPreferences.edit().apply {
+            putBoolean(
+                MainActivity.SHARED_PREFERENCES_NON_STOP_STATE,
+                binding.noStopFlightSwitch.isChecked
+            )
+            apply()
+        }
     }
 
     private fun searchRoutes() {
-        Log.d(TAG, "searchRoutes : $sourceId $destinationId")
-        viewModel.getRoutesBySourceAndDestination(sourceId, destinationId)
+        viewModel.getRoutesBySourceAndDestination(
+            sourceId,
+            destinationId,
+            binding.noStopFlightSwitch.isChecked
+        )
     }
 
     private fun setupRecyclerView() {
         routesAdapter = RouteListAdapter().also {
             it.setOnItemClickListener { _ ->
-                Toast.makeText(requireContext(), "GO to Maps", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(
+                    requireContext(),
+                    "Opening Map to: ${viewModel.departureAirport.value?.name} in ${viewModel.departureAirport.value?.country} ",
+                    Toast.LENGTH_SHORT
+                ).show()
                 openMaps()
             }
         }

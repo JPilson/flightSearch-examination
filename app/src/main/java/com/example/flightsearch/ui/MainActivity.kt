@@ -34,7 +34,7 @@ import java.util.Timer
 import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
-    private val TAG = "MainActivity"
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     lateinit var viewModel: AppViewModel
@@ -43,6 +43,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var filePickerRoutesResolver: ActivityResultLauncher<Array<String>>
     private lateinit var filePickerPlanesResolver: ActivityResultLauncher<Array<String>>
     private lateinit var animationView: LottieAnimationView
+    companion object{
+        private const val TAG = "MainActivity"
+         const val SHARED_PREFERENCES = "flight_search_by_jsumbo"
+         const val SHARED_PREFERENCES_NON_STOP_STATE = "non_stop"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
