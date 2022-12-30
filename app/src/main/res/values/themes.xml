@@ -14,8 +14,12 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="backgroundColor">@color/white</item>
-        <item name="outlinedColor">@color/f_gray</item>
+        <item name="outlinedColor">@color/spanishGray</item>
         <item name="textColor">@color/black</item>
+        <item name="secondaryTextColor">@color/spanishGray</item>
+        <item name="searchViewBackground">@color/cultured</item>
+        <item name="cardBackgroundColor">@color/cultured</item>
+
 
 
     </style>
@@ -25,7 +29,8 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.FlightSearch.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
 
     <style name="Theme.FlightSearch.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

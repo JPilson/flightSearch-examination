@@ -46,7 +46,7 @@
         <path
                 android:pathData="M16 0H384C392.837 0 400 7.16344 400 16V134C400 142.837 392.837 150 384 150H16C7.16344 150 0 142.837 0 134V16C0 7.16344 7.16344 0 16 0Z"
                 android:strokeWidth="2"
-                android:strokeColor="#C4C4C4"
+                android:strokeColor="?attr/outlinedColor"
                 />
     </group>
 </vector>

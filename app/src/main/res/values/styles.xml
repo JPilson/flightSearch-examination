@@ -14,7 +14,7 @@
     </style>
     <style name="selected_airport">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/textColor</item>
         <item name="android:layout_margin">10dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textAlignment">center</item>

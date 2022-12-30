@@ -9,11 +9,20 @@
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
+        <item name="android:actionMenuTextColor"> @color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="backgroundColor">@color/white</item>
-        <item name="outlinedColor">@color/f_gray</item>
+        <item name="backgroundColor">@color/eerleBlack</item>
+        <item name="outlinedColor">@color/white</item>
         <item name="textColor">@color/white</item>
+        <item name="secondaryTextColor">@color/spanishGray</item>
+        <item name="searchViewBackground">@color/eerierBlack</item>
+        <item name="cardBackgroundColor">@color/eerleBlack_500</item>
+    </style>
+    <style name="Theme.FlightSearch.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>
