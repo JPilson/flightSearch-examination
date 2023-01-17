@@ -36,24 +36,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-            android:id="@+id/ic_view"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@drawable/swap_background"
-            app:layout_constraintStart_toStartOf="@+id/search_holder"
-            app:layout_constraintEnd_toEndOf="@+id/search_holder"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="@+id/search_holder"
-            app:layout_constraintTop_toTopOf="@+id/search_holder">
 
-        <ImageView
-                android:id="@+id/swap"
-                android:src="@drawable/ic_arrow_swap"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:contentDescription="icon" />
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

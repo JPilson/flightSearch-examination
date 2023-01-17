@@ -60,7 +60,7 @@ class HomeFragment : Fragment() {
 
     }
 
-    @SuppressLint("SetTextI18n")
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUp()
@@ -71,17 +71,19 @@ class HomeFragment : Fragment() {
 
         val viewModel =
             AppViewModelFactory.getAppViewInstance(this, requireContext())
-        searchFragment = SearchDialogFragment(viewModel)
+        searchFragment = SearchDialogFragment.getInstance(viewModel)
 
         @SuppressLint("SetTextI18n")
-        binding.arrivePicker.label.text = "TO"
-        viewModel.departureAirport.observe(viewLifecycleOwner) {
-            setAirportPicker(
-                binding.departurePicker,
-                it,
-                SearchDialogFragment.Companion.Tag.DEPARTURE_SEARCH
-            )
+        binding.arrivePicker.label.text = "Destination Airport"
+        @SuppressLint("SetTextI18n")
+        binding.departurePicker.label.text = "Source Country"
+
+        viewModel.selectedOriginCountry.observe(viewLifecycleOwner) {
+            binding.departurePicker.countryName.text = it ?: "Select Country"
+
         }
+
+
         viewModel.destinationAirport.observe(viewLifecycleOwner) {
             setAirportPicker(
                 binding.arrivePicker,
@@ -89,9 +91,17 @@ class HomeFragment : Fragment() {
                 SearchDialogFragment.Companion.Tag.DESTINATION_SEARCH
             )
         }
+        binding.departurePicker.root.setOnClickListener {
+
+            activity?.let {
+                searchFragment.setTag(SearchDialogFragment.Companion.Tag.COUNTRY_ONY)
+                searchFragment.show(it.supportFragmentManager, "Search_Dialog")
+            }
+        }
+
         binding.buttonFirst.setOnClickListener {
-            viewModel.departureAirport.value?.let { source ->
-                if (source.IATA == destinationDefault) {
+            viewModel.selectedOriginCountry.value?.let { it ->
+                if (it.isEmpty()) {
                     Toast.makeText(requireContext(), "Select Source", Toast.LENGTH_SHORT)
                         .show()
                     return@setOnClickListener
@@ -110,8 +120,6 @@ class HomeFragment : Fragment() {
 
 
             } ?: Toast.makeText(requireContext(), "Select Source", Toast.LENGTH_SHORT).show()
-
-//            insertToDB(AirportModel.fromString("1,\"Goroka Airport\",\"Goroka\",\"Papua New Guinea\",\"GKA\",\"AYGA\",-6.081689834590001,145.391998291,5282,10,\"U\",\"Pacific/Port_Moresby\",\"airport\",\"OurAirports\""))
         }
 
 

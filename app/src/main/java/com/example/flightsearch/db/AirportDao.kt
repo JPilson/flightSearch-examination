@@ -18,4 +18,10 @@ interface AirportDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(vararg data: AirportModel)
 
+    @Query("SELECT  DISTINCT country FROM tbl_airport where lower(country) like :query ORDER BY country")
+    fun searchCountry(query:String):List<String>
+
+    @Query("SELECT * FROM TBL_AIRPORT WHERE airportId = :id")
+    fun getAirportById(id:Int):AirportModel?
+
 }

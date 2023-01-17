@@ -14,7 +14,8 @@ interface RouteDao {
     fun getAll(page: Int = 20): List<RouteModel>
 
     @Transaction
-    @Query("Select * from tbl_route INNER JOIN tbl_airline ta on ta.airlineId = tbl_route.airlineId where sourceAirportId = :sourceId and destinationAirportId = :destinationId")
+    @Query("Select * from tbl_route " +
+            "INNER JOIN tbl_airline ta on ta.airlineId = tbl_route.airlineId where sourceAirportId = :sourceId and destinationAirportId = :destinationId")
     fun getBySourceAndDestination(sourceId: Int, destinationId: Int): List<TicketModel>
 
     @Transaction
@@ -27,4 +28,11 @@ interface RouteDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(vararg data: RouteModel)
+
+    @Transaction()
+    @Query("SELECT * from tbl_route " +
+            "inner join tbl_airport t on t.id = sourceAirportId " +
+            "inner join tbl_airline a on a.airlineId = tbl_route.airlineId " +
+            "where destinationAirportId = :destinationId and t.country = :country")
+    fun searchFlightByDestinationIdAndSourceCountry(destinationId: Int,country:String):List<TicketModel>
 }

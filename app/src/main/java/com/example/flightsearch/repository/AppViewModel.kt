@@ -5,7 +5,9 @@ import androidx.lifecycle.*
 import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.log
 
 class AppViewModel(private val db: AppDatabase) :
@@ -14,17 +16,18 @@ class AppViewModel(private val db: AppDatabase) :
         private const val TAG = "AppViewModel"
     }
 
-    private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
+     private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
     private val routeRepository: RouteRepository by lazy { RouteRepository(db.routeDao()) }
     private val airlineRepository: AirlineRepository by lazy { AirlineRepository(db.airlineDao()) }
     private val planeRepository: PlaneRepository by lazy { PlaneRepository(db.planeDao()) }
 
-
+    val selectedOriginCountry: MutableLiveData<String> by lazy { MutableLiveData() }
     val airports: MutableLiveData<List<AirportModel>> by lazy { MutableLiveData() }
     val destinationAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
     val departureAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
     val foundRoutes: MutableLiveData<List<TicketModel>> by lazy { MutableLiveData() }
     val possibleTickets: MutableLiveData<List<TicketModel>> by lazy { MutableLiveData() }
+    val countriesResult: MutableLiveData<List<String>> by lazy { MutableLiveData() }
 
     fun flights(): List<String> = TODO("Get List of Flight from AppDatabase ")
 
@@ -94,6 +97,17 @@ class AppViewModel(private val db: AppDatabase) :
         }
     }
 
+    fun getFlights(destinationId: Int, sourceCountry: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            routeRepository.searchFlightByDestinationIdAndSourceCountry(
+                destinationId,
+                sourceCountry
+            ).also {
+                foundRoutes.postValue(it)
+            }
+        }
+    }
+
     fun swapLocations() {
         val copy = departureAirport.value!!
         setDepartureAirport(destinationAirport.value!!)
@@ -102,6 +116,21 @@ class AppViewModel(private val db: AppDatabase) :
 
     fun setDestinationAirport(it: AirportModel) = destinationAirport.postValue(it)
     fun setDepartureAirport(it: AirportModel) = departureAirport.postValue(it)
+
+    fun searchCountries(it: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            airportRepository.searchCountry(it).also {
+                countriesResult.postValue(it)
+            }
+        }
+    }
+    suspend fun getAirportById(id: Int):AirportModel? {
+        return withContext(Dispatchers.IO){
+            val result = airportRepository.getAirportById(id)
+            result
+        }
+
+    }
 
 
     suspend fun <T> transaction(block: () -> T) = viewModelScope.launch(Dispatchers.IO) {

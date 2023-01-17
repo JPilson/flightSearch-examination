@@ -16,7 +16,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
-            android:text="@string/from"
+            android:text="@string/country"
             android:textColor="?attr/secondaryTextColor"
             android:textAllCaps="true"
             android:textStyle="bold"
@@ -29,24 +29,13 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@+id/label"
             app:layout_constraintTop_toBottomOf="@+id/label"
-            android:text="@string/airport_name_placeholder"
+            android:text="Country Name"
             app:layout_constraintEnd_toStartOf="@+id/icon"
             android:layout_marginEnd="16dp"
             android:textColor="?attr/textColor"
             android:textStyle="bold"
             android:textSize="18sp"
-            />
-
-    <TextView
-            android:id="@+id/airportName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/secondaryTextColor"
-            android:text="@string/country_placeholder"
-            app:layout_constraintStart_toStartOf="@+id/country_name"
-            app:layout_constraintTop_toBottomOf="@+id/country_name"
-            app:layout_constraintEnd_toEndOf="@+id/country_name"
-            />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageView
             android:id="@+id/icon"
@@ -55,8 +44,9 @@
             android:src="@drawable/ic_plane_take_off"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/label"
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/country_name"
-            android:layout_marginEnd="8dp"/>
+            android:contentDescription="country_name" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

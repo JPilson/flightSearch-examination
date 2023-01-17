@@ -21,4 +21,5 @@
     <string name="airlinelogo">airlineLogo</string>
     <string name="airline_name">Airline Name</string>
     <string name="non_stop_flights_only">Non Stop Flights Only</string>
+    <string name="country">Country</string>
 </resources>
