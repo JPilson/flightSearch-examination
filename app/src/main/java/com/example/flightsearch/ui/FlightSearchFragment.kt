@@ -155,7 +155,7 @@ class FlightSearchFragment : Fragment() {
 
 
     private fun openMaps(airport:AirportModel) {
-        val location = "geo:${airport.latitude},${airport.longitude}?z=15f"
+        val location = "geo:${airport.latitude},${airport.longitude}?z=13f"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(location))
         startActivity(intent)
     }
