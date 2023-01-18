@@ -39,8 +39,9 @@ class RouteListAdapter : RecyclerView.Adapter<RouteListAdapter.RouteViewHolder>(
     override fun onBindViewHolder(holder: RouteViewHolder, position: Int) {
         val currentItem = differ.currentList[position]
         holder.binding.apply {
-            val airlineAndAirportName = "${currentItem?.airline?.name}"
-            val stops = "${currentItem.route.stops} Stops"
+            val airlineAndAirportName =
+                "${currentItem?.airline?.name}\n${currentItem?.sourceAirport?.city} - ${currentItem?.sourceAirport?.country}"
+            val stops = "${currentItem?.sourceAirport?.name}\n${currentItem.route.stops} Stops"
             sourceAirport.text = currentItem.route.sourceAirport
             destinationAirport.text = currentItem.route.destinationAirport
             airlineName.text = airlineAndAirportName

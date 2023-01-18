@@ -27,7 +27,7 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
     companion object {
         private const val TAG = "SearchDialogFragment"
         private var instance:SearchDialogFragment? = null
-        public fun getInstance(viewModel:AppViewModel):SearchDialogFragment {
+        fun getInstance(viewModel:AppViewModel):SearchDialogFragment {
             if(instance == null)
                 instance = SearchDialogFragment(viewModel)
             return instance!!
@@ -71,6 +71,7 @@ class SearchDialogFragment(private val viewModel: AppViewModel) : DialogFragment
 
         binding.searchView.requestFocus()
         binding.searchView.setOnClickListener {
+            it.requestFocus()
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

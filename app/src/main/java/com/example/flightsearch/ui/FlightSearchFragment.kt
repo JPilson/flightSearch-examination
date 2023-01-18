@@ -29,19 +29,27 @@ import kotlin.math.log
 class FlightSearchFragment : Fragment() {
 
     private var _binding: FragmentFlightSearchBinding? = null
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var viewModel: AppViewModel
     private lateinit var routesAdapter: RouteListAdapter
+
     private lateinit var routesRecyclerView: RecyclerView
-    private lateinit var searchFragment:SearchDialogFragment
+    private lateinit var searchFragment: SearchDialogFragment
+    private var mode: MODE = MODE.COUNTRY_TO_AIRPORT
     private var sourceId: Int = 0
     private var destinationId: Int = 0
     private lateinit var sharedPreferences: SharedPreferences
 
     companion object {
         private const val TAG = "FlightSearchFragment"
+
+        enum class MODE(mode: Int) {
+            COUNTRY_TO_AIRPORT(0),
+            AIRPORT_TO_AIRPORT(1)
+        }
     }
 
     override fun onCreateView(
@@ -78,23 +86,13 @@ class FlightSearchFragment : Fragment() {
 
         }
 
-        binding.noStopFlightSwitch.setOnCheckedChangeListener { _, _ ->
-            saveNoStopSwitchState()
+        when (mode) {
+            MODE.AIRPORT_TO_AIRPORT -> initWithModeAA()
+            MODE.COUNTRY_TO_AIRPORT -> initWithModeCA()
         }
-
-        binding.destinationSelection.setOnClickListener{
-            searchFragment.setTag(SearchDialogFragment.Companion.Tag.DESTINATION_SEARCH)
-            showDialog()
-
-        }
-
-        binding.departureSelection.setOnClickListener{
-            searchFragment.setTag(SearchDialogFragment.Companion.Tag.COUNTRY_ONY)
-            showDialog()
-        }
-
     }
-    private fun showDialog(){
+
+    private fun showDialog() {
         activity?.let {
             searchFragment.show(it.supportFragmentManager, "Search_Dialog")
 
@@ -112,31 +110,24 @@ class FlightSearchFragment : Fragment() {
     }
 
     private fun searchRoutes() {
-//        viewModel.getRoutesBySourceAndDestination(
-//            sourceId,
-//            destinationId,
-//            binding.noStopFlightSwitch.isChecked
-//        )
-        viewModel.getFlights(destinationId,viewModel.selectedOriginCountry.value!!)
+        viewModel.getFlights(destinationId, viewModel.selectedOriginCountry.value!!)
     }
 
     private fun setupRecyclerView() {
         routesAdapter = RouteListAdapter().also {
-            it.setOnItemClickListener { ticket -> showAirport(ticket.route.sourceAirportId.toInt())}
+            it.setOnItemClickListener { ticket -> showAirport(ticket.route.sourceAirportId.toInt()) }
         }
 
         routesRecyclerView = binding.recyclerView
         routesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        viewModel.foundRoutes.observe(viewLifecycleOwner) {
-            routesAdapter.setData(it)
-        }
         routesRecyclerView.adapter = routesAdapter
         subscribeToViewModelChanges()
     }
-     private  fun showAirport(id:Int){
+
+    private fun showAirport(id: Int) {
         runBlocking {
             val airportById = viewModel.getAirportById(id)
-            if(airportById == null){
+            if (airportById == null) {
                 Toast.makeText(
                     requireContext(),
                     "Airport Not Found $id",
@@ -153,8 +144,11 @@ class FlightSearchFragment : Fragment() {
         }
     }
 
+    fun setMode(mode: MODE) {
+        this.mode = mode
+    }
 
-    private fun openMaps(airport:AirportModel) {
+    private fun openMaps(airport: AirportModel) {
         val location = "geo:${airport.latitude},${airport.longitude}?z=13f"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(location))
         startActivity(intent)
@@ -164,9 +158,10 @@ class FlightSearchFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    private fun subscribeToViewModelChanges(){
+
+    private fun subscribeToViewModelChanges() {
         viewModel.apply {
-            selectedOriginCountry.observe(viewLifecycleOwner){
+            selectedOriginCountry.observe(viewLifecycleOwner) {
                 binding.departureSelection.text = it
                 searchRoutes()
             }
@@ -175,8 +170,52 @@ class FlightSearchFragment : Fragment() {
                 binding.destinationSelection.text = it.name
                 destinationId = it.airportId
                 searchRoutes()
+            }
+            foundRoutes.observe(viewLifecycleOwner) {
+                if (it.isEmpty()) {
+                    val txt =
+                        "NOTHING FOUND\n\nFROM: ${selectedOriginCountry.value}\n\nTO: ${destinationAirport.value?.country}\n${destinationAirport.value?.name}"
+                    binding.notFoundTV.text = txt
+                    binding.notFoundView.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                    return@observe
+                }
 
+                routesAdapter.setData(it)
+                binding.notFoundView.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
             }
         }
     }
+
+    private fun setRoutes() {
+
+    }
+
+    /**
+     * Initialize the fragment in mode Airport to Airport
+     */
+    private fun initWithModeAA() {
+
+    }
+
+    /**
+     * initialize the fragment in mode Country to Airport
+     */
+    private fun initWithModeCA() {
+        binding.noStopFlightSwitch.setOnCheckedChangeListener { _, _ ->
+            saveNoStopSwitchState()
+        }
+
+        binding.destinationSelection.setOnClickListener {
+            searchFragment.setTag(SearchDialogFragment.Companion.Tag.DESTINATION_SEARCH)
+            showDialog()
+        }
+        binding.departureSelection.setOnClickListener {
+            searchFragment.setTag(SearchDialogFragment.Companion.Tag.COUNTRY_ONY)
+            showDialog()
+        }
+    }
+
+
 }

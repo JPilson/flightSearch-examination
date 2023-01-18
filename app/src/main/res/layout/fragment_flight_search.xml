@@ -37,12 +37,33 @@
     </LinearLayout>
 
 
+    <LinearLayout
+            android:id="@+id/notFoundView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outlined_container"
+            app:layout_constraintTop_toBottomOf="@+id/noStopFlightSwitch"
+            app:layout_constraintEnd_toEndOf="@+id/search_holder"
+            android:orientation="horizontal"
+            app:flow_horizontalAlign="center"
+            app:layout_constraintStart_toStartOf="@+id/search_holder">
 
+        <TextView
+                android:id="@+id/notFoundTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:textStyle="bold"
+                android:text="NO FLIGHT OR AIRPOT WERE FOUND"
+                android:padding="20dp"
+                />
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/search_holder"
             app:layout_constraintTop_toBottomOf="@+id/noStopFlightSwitch"

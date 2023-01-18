@@ -31,7 +31,7 @@ interface RouteDao {
 
     @Transaction()
     @Query("SELECT * from tbl_route " +
-            "inner join tbl_airport t on t.id = sourceAirportId " +
+            "inner join tbl_airport t on t.airportId = sourceAirportId " +
             "inner join tbl_airline a on a.airlineId = tbl_route.airlineId " +
             "where destinationAirportId = :destinationId and t.country = :country")
     fun searchFlightByDestinationIdAndSourceCountry(destinationId: Int,country:String):List<TicketModel>
