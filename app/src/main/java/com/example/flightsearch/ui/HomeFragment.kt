@@ -15,7 +15,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.flightsearch.R
+import com.example.flightsearch.adapters.AirportListAdapter
 import com.example.flightsearch.databinding.AirportPickerBinding
 import com.example.flightsearch.databinding.FragmentHomeBinding
 import com.example.flightsearch.db.AppDatabase
@@ -36,6 +39,8 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var searchFragment: SearchDialogFragment
+    private lateinit var adapter: AirportListAdapter
+    private lateinit var recyclerView: RecyclerView
     private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
     private lateinit var viewModel: AppViewModel
     private var destinationDefault: String = "DEFAULT"
@@ -69,8 +74,7 @@ class HomeFragment : Fragment() {
     private fun setUp() {
         (activity as AppCompatActivity).supportActionBar?.title = "Home"
 
-        val viewModel =
-            AppViewModelFactory.getAppViewInstance(this, requireContext())
+        viewModel = AppViewModelFactory.getAppViewInstance(this, requireContext())
         searchFragment = SearchDialogFragment.getInstance(viewModel)
 
         @SuppressLint("SetTextI18n")
@@ -78,19 +82,6 @@ class HomeFragment : Fragment() {
         @SuppressLint("SetTextI18n")
         binding.departurePicker.label.text = "Source Country"
 
-        viewModel.selectedOriginCountry.observe(viewLifecycleOwner) {
-            binding.departurePicker.countryName.text = it ?: "Select Country"
-
-        }
-
-
-        viewModel.destinationAirport.observe(viewLifecycleOwner) {
-            setAirportPicker(
-                binding.arrivePicker,
-                it,
-                SearchDialogFragment.Companion.Tag.DESTINATION_SEARCH
-            )
-        }
         binding.departurePicker.root.setOnClickListener {
 
             activity?.let {
@@ -98,7 +89,6 @@ class HomeFragment : Fragment() {
                 searchFragment.show(it.supportFragmentManager, "Search_Dialog")
             }
         }
-
         binding.buttonFirst.setOnClickListener {
             viewModel.selectedOriginCountry.value?.let { it ->
                 if (it.isEmpty()) {
@@ -114,13 +104,16 @@ class HomeFragment : Fragment() {
                         return@setOnClickListener
                     }
 
-                    findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+                    searchPossibleAirports()
                 } ?: Toast.makeText(requireContext(), "Select Destination", Toast.LENGTH_SHORT)
                     .show()
 
 
             } ?: Toast.makeText(requireContext(), "Select Source", Toast.LENGTH_SHORT).show()
         }
+
+        setUpRecyclerView()
+        setObserver()
 
 
     }
@@ -147,18 +140,57 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun insertToDB(airport: AirportModel) {
-        try {
-            viewModel.registerAirport(airport)
-            Toast.makeText(context, "Added New one", Toast.LENGTH_SHORT).show()
-        } catch (e: java.lang.Exception) {
-            Toast.makeText(context, "Something went Wrong", Toast.LENGTH_SHORT).show()
-        }
-    }
+//    private fun insertToDB(airport: AirportModel) {
+//        try {
+//            viewModel.registerAirport(airport)
+//            Toast.makeText(context, "Added New one", Toast.LENGTH_SHORT).show()
+//        } catch (e: java.lang.Exception) {
+//            Toast.makeText(context, "Something went Wrong", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setUpRecyclerView() {
+        recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = AirportListAdapter().also {
+            it.setOnItemClickListener { airportModel ->
+                viewModel.departureAirport.postValue(airportModel)
+                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            }
+        }
+        recyclerView.adapter = adapter
+    }
+
+    private fun searchPossibleAirports() {
+        val id = viewModel.destinationAirport.value?.airportId ?: 0
+        val country = viewModel.selectedOriginCountry.value ?: ""
+        viewModel.searchPossibleAirports(id, country)
+    }
+
+    private fun setObserver() {
+
+
+        viewModel.selectedOriginCountry.observe(viewLifecycleOwner) {
+            binding.departurePicker.countryName.text = it ?: "Select Country"
+        }
+
+        viewModel.destinationAirport.observe(viewLifecycleOwner) {
+            setAirportPicker(
+                binding.arrivePicker,
+                it,
+                SearchDialogFragment.Companion.Tag.DESTINATION_SEARCH
+            )
+        }
+        viewModel.possibleAirport.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), "Result ${it.size}", Toast.LENGTH_SHORT).show()
+            adapter.setData(it)
+        }
+
     }
 
 

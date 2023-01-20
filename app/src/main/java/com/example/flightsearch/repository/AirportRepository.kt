@@ -9,5 +9,7 @@ class AirportRepository(private val dao: AirportDao) {
     fun getAll(page: Int = 1) = dao.getAll(page)
     fun search(query: String) = dao.selectByName(query)
     fun searchCountry(query: String) = dao.searchCountry(query)
-    fun getAirportById(id:Int) = dao.getAirportById(id)
+    fun getAirportById(id: Int) = dao.getAirportById(id)
+    fun searchPossibleAirports(destinationId: Int, sourceCountry: String) =
+        dao.searchPossibleAirports(destinationId, sourceCountry)
 }

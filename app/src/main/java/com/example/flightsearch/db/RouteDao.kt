@@ -23,7 +23,7 @@ interface RouteDao {
     fun getBySourceAndDestinationWithAirline(sourceId: Int, destinationId: Int): List<TicketModel>
 
     @Transaction
-    @Query("Select * from tbl_route INNER JOIN tbl_airline ta on ta.airlineId = tbl_route.airlineId where sourceAirportId = :sourceId and destinationAirportId = :destinationId and stops = 0")
+    @Query("Select * from tbl_route INNER JOIN tbl_airport p on p.airportId = sourceAirportId INNER JOIN tbl_airline ta on ta.airlineId = tbl_route.airlineId where sourceAirportId = :sourceId and destinationAirportId = :destinationId and stops = 0")
     fun getNonStopBySourceAndDestination(sourceId: Int, destinationId: Int): List<TicketModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

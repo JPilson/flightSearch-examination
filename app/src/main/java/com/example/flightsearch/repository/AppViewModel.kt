@@ -16,7 +16,7 @@ class AppViewModel(private val db: AppDatabase) :
         private const val TAG = "AppViewModel"
     }
 
-     private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
+    private val airportRepository: AirportRepository by lazy { AirportRepository(db.airportDao()) }
     private val routeRepository: RouteRepository by lazy { RouteRepository(db.routeDao()) }
     private val airlineRepository: AirlineRepository by lazy { AirlineRepository(db.airlineDao()) }
     private val planeRepository: PlaneRepository by lazy { PlaneRepository(db.planeDao()) }
@@ -27,6 +27,7 @@ class AppViewModel(private val db: AppDatabase) :
     val departureAirport: MutableLiveData<AirportModel> by lazy { MutableLiveData() }
     val foundRoutes: MutableLiveData<List<TicketModel>> by lazy { MutableLiveData() }
     val possibleTickets: MutableLiveData<List<TicketModel>> by lazy { MutableLiveData() }
+    val possibleAirport: MutableLiveData<List<AirportModel>> by lazy { MutableLiveData() }
     val countriesResult: MutableLiveData<List<String>> by lazy { MutableLiveData() }
 
     fun flights(): List<String> = TODO("Get List of Flight from AppDatabase ")
@@ -124,8 +125,17 @@ class AppViewModel(private val db: AppDatabase) :
             }
         }
     }
-    suspend fun getAirportById(id: Int):AirportModel? {
-        return withContext(Dispatchers.IO){
+
+    fun searchPossibleAirports(destinationId: Int, sourceCountry: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            airportRepository.searchPossibleAirports(destinationId, sourceCountry).also {
+                possibleAirport.postValue(it)
+            }
+        }
+    }
+
+    suspend fun getAirportById(id: Int): AirportModel? {
+        return withContext(Dispatchers.IO) {
             val result = airportRepository.getAirportById(id)
             result
         }
