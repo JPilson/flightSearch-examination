@@ -1,5 +1,8 @@
 package com.example.flightsearch.ui
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -20,6 +23,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.example.flightsearch.R
 import com.example.flightsearch.databinding.ActivityMainBinding
+import com.example.flightsearch.db.AppDatabase
 import com.example.flightsearch.models.AirlineModel
 import com.example.flightsearch.models.AirportModel
 import com.example.flightsearch.models.PlaneModel
@@ -27,6 +31,7 @@ import com.example.flightsearch.models.RouteModel
 import com.example.flightsearch.repository.AppViewModel
 import com.example.flightsearch.repository.AppViewModelFactory
 import kotlinx.coroutines.*
+import okio.ByteString.Companion.readByteString
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -38,15 +43,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     lateinit var viewModel: AppViewModel
-    private lateinit var filePickerResolver: ActivityResultLauncher<Array<String>>
-    private lateinit var filePickerAirlineResolver: ActivityResultLauncher<Array<String>>
-    private lateinit var filePickerRoutesResolver: ActivityResultLauncher<Array<String>>
-    private lateinit var filePickerPlanesResolver: ActivityResultLauncher<Array<String>>
     private lateinit var animationView: LottieAnimationView
-    companion object{
+    private lateinit var sharedPreferences: SharedPreferences
+
+    companion object {
         private const val TAG = "MainActivity"
-         const val SHARED_PREFERENCES = "flight_search_by_jsumbo"
-         const val SHARED_PREFERENCES_NON_STOP_STATE = "non_stop"
+        const val SHARED_PREFERENCES = "flight_search_by_jsumbo"
+        const val SHARED_PREFERENCES_NON_STOP_STATE = "non_stop"
+        const val SHARED_PREFERENCES_IS_DATA_SYNCED = "is_data_synced"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +70,16 @@ class MainActivity : AppCompatActivity() {
         viewModel = AppViewModelFactory.getAppViewInstance(this, this)
         animationView = binding.lottieLayer.animationView;
         animationView.setAnimation(R.raw.upload_animation)
-
-        setAirportData()
-        setAirlineFilePicker()
-        setRoutesFilePicker()
-        setPlaneFilePicker()
+        sharedPreferences =
+            getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)!!
+        when (sharedPreferences.contains(SHARED_PREFERENCES_IS_DATA_SYNCED)) {
+            true -> {
+//                TODO toast
+            }
+            false -> {
+                syncDataFile()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -80,25 +89,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_import_airport_data -> {
-                filePickerResolver.launch(arrayOf("*/*"))
-                true
+        when (item.itemId) {
+            R.id.sync_data -> {
+                syncDataFile()
             }
-            R.id.action_import_airline_data -> {
-                filePickerAirlineResolver.launch(arrayOf("*/*"))
-                true
-            }
-            R.id.action_import_planes_data -> {
-                filePickerPlanesResolver.launch(arrayOf("*/*"))
-                true
-            }
-            R.id.action_import_routes_data -> {
-                filePickerRoutesResolver.launch(arrayOf("*/*"))
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+            else -> {}
         }
+        return true
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -135,119 +133,56 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setAirportData() {
-        filePickerResolver =
-            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                if (uri!=null) {
-                    try {
-                        loaderVisibility(View.VISIBLE)
-                        openDocument(uri) {
-                            viewModel.registerAirport(AirportModel.fromString(it))
-                        }
-                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                        loaderVisibility(View.INVISIBLE)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "saveAirportData: e${e.localizedMessage}\n${e.stackTrace}")
-                        Toast.makeText(
-                            this,
-                            "Something Went Wrong When Adding data",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        loaderVisibility(View.INVISIBLE, true)
-                    }
-                }
-            }
-    }
 
-    private fun setAirlineFilePicker() {
-        filePickerAirlineResolver =
-            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                if (uri!=null) {
-                    try {
-                        loaderVisibility(View.VISIBLE)
-                        openDocument(uri) {
-                            viewModel.registerAirline(AirlineModel.fromString(it))
-                        }
-                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                        loaderVisibility(View.INVISIBLE)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "setAirlineFilePicker: $e\n${e.localizedMessage}\n" +
-                                " ${e.stackTrace}", )
-                        Toast.makeText(
-                            this,
-                            "Something Went Wrong When Adding data",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        loaderVisibility(View.INVISIBLE, true)
-                    }
-                }
-            }
-    }
-
-    private fun setPlaneFilePicker() {
-        filePickerPlanesResolver =
-            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                if(uri!= null){
-                    try {
-                        loaderVisibility(View.VISIBLE)
-                        openDocument(uri) {
-                            viewModel.registerPlanes(PlaneModel.fromString(it))
-                        }
-                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                        loaderVisibility(View.INVISIBLE)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "setPlaneFilePicker:${e.localizedMessage}\n ${e.stackTrace} " )
-                        Toast.makeText(
-                            this,
-                            "Something Went Wrong When Adding data",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        loaderVisibility(View.INVISIBLE, true)
-                    }
-                }
-            }
-    }
-
-    private fun setRoutesFilePicker() {
-        filePickerRoutesResolver =
-            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                if (uri!=null) {
-                    try {
-                        loaderVisibility(View.VISIBLE)
-                        openDocument(uri) {
-                            viewModel.registerRoutes(RouteModel.fromString(it))
-                        }
-                        Toast.makeText(this, "Data Added ", Toast.LENGTH_SHORT).show()
-                        loaderVisibility(View.INVISIBLE)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "setRoutesFilePicker: ${e.localizedMessage}\n ${e.stackTrace}", )
-                        Toast.makeText(
-                            this,
-                            "Something Went Wrong When Adding data",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        loaderVisibility(View.INVISIBLE, true)
-                    }
-                }
-            }
-    }
-
-    @Throws(IOException::class)
-    fun openDocument(uri: Uri?, forEachLine: (String) -> Unit) {
-        if (uri == null) {
-            Toast.makeText(this, "Failed to open File", Toast.LENGTH_SHORT).show()
-            return
-        }
-        contentResolver.openInputStream(uri)?.use { inputStream ->
-            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    forEachLine(line)
-                    line = reader.readLine()
-                }
+    private fun openDocumentFromResource(resourceId: Int, forEachLine: (String) -> Unit) {
+        val openRawResource = resources.openRawResource(resourceId)
+        BufferedReader(InputStreamReader(openRawResource)).use { reader ->
+            var line: String? = reader.readLine()
+            while (line != null) {
+                forEachLine(line)
+                line = reader.readLine()
             }
         }
+    }
 
+    private fun syncDataFile() {
+        try {
+            loaderVisibility(View.VISIBLE)
+            val files = listOf(R.raw.airports, R.raw.airlines, R.raw.routes, R.raw.planes)
+            files.forEach {
+                openDocumentFromResource(it) { line ->
+                    when (it) {
+                        R.raw.airports -> {
+                            viewModel.registerAirport(AirportModel.fromString(line))
+                        }
+                        R.raw.airlines -> {
+                            viewModel.registerAirline(AirlineModel.fromString(line))
+                        }
+                        R.raw.routes -> {
+                            viewModel.registerRoutes(RouteModel.fromString(line))
+                        }
+                        R.raw.planes -> {
+                            viewModel.registerPlanes(PlaneModel.fromString(line))
+                        }
+                    }
+                }
+            }
+
+            sharedPreferences.edit().apply {
+                putBoolean(SHARED_PREFERENCES_IS_DATA_SYNCED, true)
+                apply()
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Something went wrong while updating DB", Toast.LENGTH_SHORT)
+                .show()
+            sharedPreferences.edit().apply {
+                putBoolean(SHARED_PREFERENCES_IS_DATA_SYNCED, false)
+                apply()
+            }
+        } finally {
+            loaderVisibility(View.INVISIBLE)
+        }
     }
 
 }

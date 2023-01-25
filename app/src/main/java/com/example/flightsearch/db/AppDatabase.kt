@@ -15,9 +15,10 @@ import com.example.flightsearch.models.*
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun airportDao(): AirportDao
-    abstract fun routeDao():RouteDao
-    abstract fun airlineDao():AirlineDao
-    abstract fun planeDao():PlaneDao
+    abstract fun routeDao(): RouteDao
+    abstract fun airlineDao(): AirlineDao
+    abstract fun planeDao(): PlaneDao
+
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -27,6 +28,11 @@ abstract class AppDatabase : RoomDatabase() {
                     .build()
                 return INSTANCE!!
             }
+        }
+        fun resetCursor(context: Context) {
+            INSTANCE?.close()
+            INSTANCE = null
+            getDatabase(context)
         }
     }
 }

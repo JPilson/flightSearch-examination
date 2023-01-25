@@ -22,4 +22,5 @@
     <string name="airline_name">Airline Name</string>
     <string name="non_stop_flights_only">Non Stop Flights Only</string>
     <string name="country">Country</string>
+    <string name="refresh_db">REFRESH DB</string>
 </resources>

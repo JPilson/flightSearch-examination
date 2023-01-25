@@ -29,7 +29,7 @@ interface RouteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(vararg data: RouteModel)
 
-    @Transaction()
+    @Transaction
     @Query("SELECT * from tbl_route " +
             "inner join tbl_airport t on t.airportId = sourceAirportId " +
             "inner join tbl_airline a on a.airlineId = tbl_route.airlineId " +

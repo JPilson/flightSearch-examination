@@ -49,7 +49,6 @@ data class RouteModel(
     companion object {
         private const val TAG = "RouteModel"
         fun fromString(it: String): RouteModel {
-            Log.d(TAG, "fromString: $it")
             val split = it.split(",")
             return RouteModel(
                 0,
